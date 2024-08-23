@@ -1,5 +1,7 @@
+// src/components/Navbar.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
+import ThemeToggle from './ThemeToggle'; // Import ThemeToggle component
 
 const Navbar = () => {
   return (
@@ -40,7 +42,8 @@ const Navbar = () => {
           <li><Link to="/contact">Contact Us</Link></li>
         </ul>
       </div>
-      <div className="navbar-end">
+      <div className="navbar-end flex items-center">
+        <ThemeToggle /> {/* Add ThemeToggle component here */}
         <Link to="/login" className="btn">Login</Link>
       </div>
     </div>
