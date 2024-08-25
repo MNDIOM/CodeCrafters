@@ -30,6 +30,7 @@ const Navbar = () => {
             <li><Link to="/about">About</Link></li>
             <li><Link to="/contact">Contact Us</Link></li>
             <li><Link to="/login">Login</Link></li>
+            <li><Link to="/signup">Sign Up</Link></li> {/* Added Sign Up link */}
           </ul>
         </div>
         <Link to="/" className="btn btn-ghost text-xl">SunVolt</Link>
@@ -45,6 +46,7 @@ const Navbar = () => {
       <div className="navbar-end flex items-center">
         <ThemeToggle /> {/* Add ThemeToggle component here */}
         <Link to="/login" className="btn">Login</Link>
+        <Link to="/signup" className="btn btn-primary ml-2">Sign Up</Link> {/* Added Sign Up button */}
       </div>
     </div>
   );
