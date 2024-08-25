@@ -7,6 +7,7 @@ import Login from './components/Login'; // Import the Login component
 import About from './pages/About';
 import SolarInfos from './pages/SolarInfos';
 import Contact from './pages/Contact';
+import SignUp from './components/SignUp';
 import './index.css';
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
         <Route path="/" element={<Hero />} />
         <Route path="/questionnaire" element={<Questionnaire />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
         <Route path="/about" element={<About />} />
         <Route path="/solarInfos" element={<SolarInfos />} />
         <Route path="/contact" element={<Contact />} />
