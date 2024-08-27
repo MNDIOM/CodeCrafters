@@ -1,15 +1,37 @@
 import React, { useState } from 'react';
+import axios from 'axios'; // Import axios for making HTTP requests
 
 const Login = () => {
-  const [email, setEmail] = useState('');
+  const [identifier, setIdentifier] = useState(''); // Email or Username
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState('');
   const [forgotPasswordVisible, setForgotPasswordVisible] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [showAlert, setShowAlert] = useState(false);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // Handle login logic here
+    
+    try {
+      const response = await axios.post('/api/users/login', { identifier, password });
+
+      if (response.status === 200) {
+        setAlertMessage('Login successful!');
+        setShowAlert(true);
+        // Redirect or handle successful login
+      }
+    } catch (error) {
+      if (error.response) {
+        setAlertMessage(error.response.data.message || 'Server error');
+      } else if (error.request) {
+        setAlertMessage('Network error. Please check your connection.');
+      } else {
+        setAlertMessage('An unexpected error occurred.');
+      }
+      setShowAlert(true);
+      console.error('Login error:', error);
+    }
   };
 
   const handleForgotPassword = () => {
@@ -19,16 +41,23 @@ const Login = () => {
 
   return (
     <div className="login-container flex justify-center items-center h-screen">
+      {showAlert && (
+        <div className={`alert ${alertMessage.includes('error') ? 'alert-error' : 'alert-success'} mb-4`}>
+          <div>
+            <span>{alertMessage}</span>
+          </div>
+        </div>
+      )}
       <form onSubmit={handleLogin} className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
         <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
         
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">Email</label>
+          <label className="block text-gray-700 text-sm font-bold mb-2">Email or Username</label>
           <input
-            type="email"
-            placeholder="Enter your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            type="text"
+            placeholder="Enter your email or username"
+            value={identifier}
+            onChange={(e) => setIdentifier(e.target.value)}
             className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />
