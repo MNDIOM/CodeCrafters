@@ -13,8 +13,13 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     
+    const formData = {
+      identifier,
+      password
+    };
+
     try {
-      const response = await axios.post('/api/users/login', { identifier, password });
+      const response = await axios.post('http://localhost:5001/api/users/login', formData);
 
       if (response.status === 200) {
         setAlertMessage('Login successful!');
@@ -23,14 +28,19 @@ const Login = () => {
       }
     } catch (error) {
       if (error.response) {
+        // Server responded with a status other than 200 range
         setAlertMessage(error.response.data.message || 'Server error');
+        console.error('Server error:', error.response.data);
       } else if (error.request) {
+        // Request was made but no response was received
         setAlertMessage('Network error. Please check your connection.');
+        console.error('Network error:', error.request);
       } else {
+        // Something happened in setting up the request
         setAlertMessage('An unexpected error occurred.');
+        console.error('Error:', error.message);
       }
       setShowAlert(true);
-      console.error('Login error:', error);
     }
   };
 

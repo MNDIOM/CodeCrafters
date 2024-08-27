@@ -1,6 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
 import Navbar from './components/Navbar';
-import Hero from './components/Hero';
+import Hero from './pages/Hero';
 import Questionnaire from './components/Questionnaire';
 import Footer from './components/Footer';
 import Login from './components/Login'; 

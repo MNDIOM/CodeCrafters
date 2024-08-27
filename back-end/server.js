@@ -3,25 +3,29 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
 const mongoose = require('mongoose');
-const cors = require('cors'); // Import CORS
+const cors = require('cors');
+const jwt = require('jsonwebtoken'); // Import JWT
 
 dotenv.config();
 
 const app = express();
 
 // Middleware
-app.use(cors()); // Use CORS middleware to allow cross-origin requests
+app.use(cors());
 app.use(bodyParser.json());
+
+// Import the authentication middleware
+const authenticateToken = require('./middleware/authMiddleware');
 
 // Nodemailer Transporter Setup
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS, // Use environment variable for security
+    pass: process.env.EMAIL_PASS,
   },
   tls: {
-    rejectUnauthorized: false, // Bypass self-signed cert issues
+    rejectUnauthorized: false,
   },
 });
 
@@ -37,7 +41,6 @@ mongoose.connect(process.env.MONGODB_URI, {
 app.post('/api/send-message', async (req, res) => {
   const { name, email, message } = req.body;
 
-  // Validate input
   if (!name || !email || !message) {
     return res.status(400).json({ success: false, message: 'All fields are required.' });
   }
@@ -60,6 +63,11 @@ app.post('/api/send-message', async (req, res) => {
 
 // User Routes
 app.use('/api/users', require('./routes/userRoutes')); // Include the user routes
+
+// Example of a protected route
+app.get('/api/protected', authenticateToken, (req, res) => {
+  res.json({ message: 'This is a protected route', user: req.user });
+});
 
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
