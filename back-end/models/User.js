@@ -21,6 +21,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  address: {
+    type: String, // Add address field
+    default: '',  // Default value to avoid errors if not provided
+  },
 });
 
 // Pre-save hook to hash the password before saving
