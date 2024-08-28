@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const authenticateToken = require('../middleware/authMiddleware'); // Import the authentication middleware
 require('dotenv').config();
+const axios = require('axios');
 
 const router = express.Router();
 
@@ -53,7 +54,7 @@ router.post('/login', async (req, res) => {
 
     if (!user) {
       console.log('No user found with that identifier');
-      return res.status(400).json({ message: 'Invalid credentials' });
+      return res.status(400).json({ message: 'no user found' });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
@@ -61,7 +62,7 @@ router.post('/login', async (req, res) => {
 
     if (!isMatch) {
       console.log('Password does not match');
-      return res.status(400).json({ message: 'Invalid credentials' });
+      return res.status(400).json({ message: 'password does not match!' });
     }
 
     const payload = { id: user._id, name: user.name, email: user.email, username: user.username };
@@ -74,9 +75,65 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// GET /profile - Example of a protected route
-router.get('/profile', authenticateToken, (req, res) => {
-  res.status(200).json({ message: 'This is a protected route', user: req.user });
+// GET /profile - Fetch the user's profile data
+router.get('/profile', authenticateToken, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select('-password'); // Exclude password
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    console.error('Error fetching profile:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// PUT /profile/address - Update the user's address
+router.put('/profile/address', authenticateToken, async (req, res) => {
+  const { address } = req.body;
+
+  if (!address) {
+    return res.status(400).json({ message: 'Address is required' });
+  }
+
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    user.address = address;
+    await user.save();
+
+    res.status(200).json({ message: 'Address updated successfully' });
+  } catch (error) {
+    console.error('Error updating address:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// POST /profile/solar - Get solar estimate for the user's address
+router.post('/profile/solar', authenticateToken, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user || !user.address) {
+      return res.status(400).json({ message: 'Address is required' });
+    }
+
+    const response = await axios.get('https://www.googleapis.com/sunroof/v1/estimate', {
+      params: {
+        address: user.address,
+        key: process.env.GOOGLE_API_KEY, // Make sure to set this in your .env file
+      },
+    });
+
+    const solarEstimate = response.data;
+    res.status(200).json({ message: 'Solar estimate fetched successfully', solarEstimate });
+  } catch (error) {
+    console.error('Error fetching solar estimate:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
 });
 
 module.exports = router;
