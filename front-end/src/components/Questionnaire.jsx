@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import axios from 'axios';
 
 function Questionnaire() {
   const [step, setStep] = useState(1);
@@ -16,6 +17,7 @@ function Questionnaire() {
     lastName: '',
     email: ''
   });
+  const [submitted, setSubmitted] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -36,8 +38,25 @@ function Questionnaire() {
   };
 
   const handleSubmit = () => {
-    // Handle form submission logic here
-    console.log('Form submitted:', formData);
+    axios.post('/api/questionnaire', formData)
+      .then(response => {
+        console.log('Form submitted:', response.data);
+        setSubmitted(true);
+        setStep(9);
+      })
+      .catch(error => {
+        console.error('Error submitting form:', error);
+      });
+  };
+
+  const handleAddressSubmit = async () => {
+    try {
+      const response = await axios.get(`https://solar.googleapis.com/v1/buildingInsights:findClosest?address=${encodeURIComponent(formData.address)}&apikey=AIzaSyBnBCLNcR_2aqPmc azGCg3XC1sitaFZGpU`);
+      console.log('API Response:', response.data);
+      // Handle the API response as needed
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
   };
 
   const handleNext = () => {
@@ -277,7 +296,7 @@ function Questionnaire() {
 
         {step === 7 && (
           <div>
-            <h2 className="text-2xl font-bold mb-4">Would you remove trees to go solar?</h2>
+            <h2 className="text-2xl font-bold mb-4">Would you remove trees or other obstructions?</h2>
             <label className="block mb-2">
               <input
                 type="radio"
@@ -352,34 +371,33 @@ function Questionnaire() {
               placeholder="Enter your address"
               className="border border-gray-300 p-2 w-full rounded mb-4"
             />
-            {/* Integrate Google Maps here if needed */}
             <button
-              onClick={handleNext}
+              onClick={handleAddressSubmit}
               disabled={isNextButtonDisabled()}
               className="btn btn-primary w-full"
             >
-              Next
+              Submit
             </button>
           </div>
         )}
 
         {step === 10 && (
           <div>
-            <h2 className="text-2xl font-bold mb-4">Enter your first name and last name</h2>
+            <h2 className="text-2xl font-bold mb-4">Enter your name</h2>
             <input
               type="text"
               name="firstName"
               value={formData.firstName}
               onChange={handleChange}
-              placeholder="First name"
-              className="border border-gray-300 p-2 w-full rounded mb-2"
+              placeholder="First Name"
+              className="border border-gray-300 p-2 w-full rounded mb-4"
             />
             <input
               type="text"
               name="lastName"
               value={formData.lastName}
               onChange={handleChange}
-              placeholder="Last name"
+              placeholder="Last Name"
               className="border border-gray-300 p-2 w-full rounded mb-4"
             />
             <button
@@ -400,7 +418,7 @@ function Questionnaire() {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              placeholder="Email address"
+              placeholder="Email Address"
               className="border border-gray-300 p-2 w-full rounded mb-4"
             />
             <button
@@ -410,6 +428,13 @@ function Questionnaire() {
             >
               Submit
             </button>
+          </div>
+        )}
+
+        {submitted && (
+          <div className="text-center">
+            <h2 className="text-2xl font-bold mb-4">Thank you for your submission!</h2>
+            <p>Your responses have been recorded.</p>
           </div>
         )}
       </div>

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import axios from 'axios'; // Import axios for making HTTP requests
+import { Link } from 'react-router-dom'; // Import Link from react-router-dom
+import axios from 'axios'; 
 
 const Login = () => {
-  const [identifier, setIdentifier] = useState(''); // Email or Username
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState('');
@@ -24,19 +25,15 @@ const Login = () => {
       if (response.status === 200) {
         setAlertMessage('Login successful!');
         setShowAlert(true);
-        // Redirect or handle successful login
       }
     } catch (error) {
       if (error.response) {
-        // Server responded with a status other than 200 range
         setAlertMessage(error.response.data.message || 'Server error');
         console.error('Server error:', error.response.data);
       } else if (error.request) {
-        // Request was made but no response was received
         setAlertMessage('Network error. Please check your connection.');
         console.error('Network error:', error.request);
       } else {
-        // Something happened in setting up the request
         setAlertMessage('An unexpected error occurred.');
         console.error('Error:', error.message);
       }
@@ -45,7 +42,6 @@ const Login = () => {
   };
 
   const handleForgotPassword = () => {
-    // Handle forgot password logic, e.g., send password reset email
     alert(`Password reset link sent to ${forgotPasswordEmail}`);
   };
 
@@ -127,6 +123,15 @@ const Login = () => {
         >
           Login
         </button>
+
+        <div className="mt-4 text-center">
+          <p className="text-gray-600 text-sm">
+            Don't have an account?{' '}
+            <Link to="/signup" className="text-blue-500 hover:underline">
+              Sign Up
+            </Link>
+          </p>
+        </div>
       </form>
     </div>
   );
