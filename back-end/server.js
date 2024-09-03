@@ -37,7 +37,6 @@ mongoose.connect(process.env.MONGODB_URI, {
 .then(() => console.log('MongoDB connected'))
 .catch(err => console.error('Failed to connect to MongoDB', err));
 
-// Route for sending messages
 app.post('/api/send-message', async (req, res) => {
   const { name, email, message } = req.body;
 
@@ -61,10 +60,9 @@ app.post('/api/send-message', async (req, res) => {
   }
 });
 
-// User Routes
 app.use('/api/users', require('./routes/userRoutes')); // Include the user routes
+app.use('/api/sunroof', require('./routes/sunroofRoutes')); // Include the sunroof routes
 
-// Example of a protected route
 app.get('/api/protected', authenticateToken, (req, res) => {
   res.json({ message: 'This is a protected route', user: req.user });
 });

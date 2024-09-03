@@ -2,7 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-const authenticateToken = require('../middleware/authMiddleware'); // Import the authentication middleware
+const authenticateToken = require('../middleware/authMiddleware'); 
 require('dotenv').config();
 const axios = require('axios');
 
