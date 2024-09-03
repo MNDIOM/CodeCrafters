@@ -11,11 +11,11 @@ function Questionnaire() {
     interestedInBatteries: '',
     batteryReason: [],
     removeTrees: '',
-    roofAge: '',
     address: '',
     firstName: '',
     lastName: '',
-    email: ''
+    email: '',
+    roofMoreThan20Years: false
   });
   const [submitted, setSubmitted] = useState(false);
 
@@ -33,6 +33,10 @@ function Questionnaire() {
     }));
   };
 
+  const handleSingleCheckboxChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.checked });
+  };
+
   const handleSliderChange = (e) => {
     setFormData({ ...formData, electricBill: e.target.value });
   };
@@ -42,21 +46,15 @@ function Questionnaire() {
       .then(response => {
         console.log('Form submitted:', response.data);
         setSubmitted(true);
-        setStep(9);
       })
       .catch(error => {
         console.error('Error submitting form:', error);
       });
   };
 
-  const handleAddressSubmit = async () => {
-    try {
-      const response = await axios.get(`https://solar.googleapis.com/v1/buildingInsights:findClosest?address=${encodeURIComponent(formData.address)}&apikey=AIzaSyBnBCLNcR_2aqPmc azGCg3XC1sitaFZGpU`);
-      console.log('API Response:', response.data);
-      // Handle the API response as needed
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
+  const handleAddressSubmit = () => {
+    const encodedAddress = encodeURIComponent(formData.address);
+    window.location.href = `https://solar.googleapis.com/v1/buildingInsights:findClosest?address=${encodedAddress}&apikey=YOUR_API_KEY`;
   };
 
   const handleNext = () => {
@@ -82,13 +80,13 @@ function Questionnaire() {
       case 7:
         return !formData.removeTrees;
       case 8:
-        return !formData.roofAge;
-      case 9:
-        return !formData.address;
-      case 10:
         return !formData.firstName || !formData.lastName;
-      case 11:
+      case 9:
         return !formData.email;
+      case 10:
+        return !formData.address;
+      case 11:
+        return formData.roofMoreThan20Years === undefined;
       default:
         return false;
     }
@@ -296,7 +294,7 @@ function Questionnaire() {
 
         {step === 7 && (
           <div>
-            <h2 className="text-2xl font-bold mb-4">Would you remove trees or other obstructions?</h2>
+            <h2 className="text-2xl font-bold mb-4">Would you like to remove any trees or obstructions?</h2>
             <label className="block mb-2">
               <input
                 type="radio"
@@ -329,61 +327,7 @@ function Questionnaire() {
 
         {step === 8 && (
           <div>
-            <h2 className="text-2xl font-bold mb-4">Is your roof more than 20 years old?</h2>
-            <label className="block mb-2">
-              <input
-                type="radio"
-                name="roofAge"
-                value="Yes"
-                checked={formData.roofAge === 'Yes'}
-                onChange={handleChange}
-              />
-              Yes
-            </label>
-            <label className="block mb-4">
-              <input
-                type="radio"
-                name="roofAge"
-                value="No"
-                checked={formData.roofAge === 'No'}
-                onChange={handleChange}
-              />
-              No
-            </label>
-            <button
-              onClick={handleNext}
-              disabled={isNextButtonDisabled()}
-              className="btn btn-primary w-full"
-            >
-              Next
-            </button>
-          </div>
-        )}
-
-        {step === 9 && (
-          <div>
-            <h2 className="text-2xl font-bold mb-4">Enter your address</h2>
-            <input
-              type="text"
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-              placeholder="Enter your address"
-              className="border border-gray-300 p-2 w-full rounded mb-4"
-            />
-            <button
-              onClick={handleAddressSubmit}
-              disabled={isNextButtonDisabled()}
-              className="btn btn-primary w-full"
-            >
-              Submit
-            </button>
-          </div>
-        )}
-
-        {step === 10 && (
-          <div>
-            <h2 className="text-2xl font-bold mb-4">Enter your name</h2>
+            <h2 className="text-2xl font-bold mb-4">What's your name?</h2>
             <input
               type="text"
               name="firstName"
@@ -410,31 +354,51 @@ function Questionnaire() {
           </div>
         )}
 
-        {step === 11 && (
+        {step === 9 && (
           <div>
-            <h2 className="text-2xl font-bold mb-4">Enter your email address</h2>
+            <h2 className="text-2xl font-bold mb-4">Enter your email</h2>
             <input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
-              placeholder="Email Address"
+              placeholder="Enter your email"
               className="border border-gray-300 p-2 w-full rounded mb-4"
             />
             <button
-              onClick={handleSubmit}
+              onClick={handleNext}
               disabled={isNextButtonDisabled()}
               className="btn btn-primary w-full"
             >
-              Submit
+              Next
+            </button>
+          </div>
+        )}
+
+        {step === 10 && (
+          <div>
+            <h2 className="text-2xl font-bold mb-4">Enter your address</h2>
+            <input
+              type="text"
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              placeholder="Enter your address"
+              className="border border-gray-300 p-2 w-full rounded mb-4"
+            />
+            <button
+              onClick={handleAddressSubmit}
+              disabled={isNextButtonDisabled()}
+              className="btn btn-primary w-full"
+            >
+              Let's find your roof
             </button>
           </div>
         )}
 
         {submitted && (
-          <div className="text-center">
-            <h2 className="text-2xl font-bold mb-4">Thank you for your submission!</h2>
-            <p>Your responses have been recorded.</p>
+          <div>
+            <h2 className="text-2xl font-bold mb-4">Thank you for submitting the questionnaire!</h2>
           </div>
         )}
       </div>
