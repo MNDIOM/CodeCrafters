@@ -27,8 +27,6 @@ const SignUp = () => {
     e.preventDefault();
     setLoading(true);
 
-    console.log('Form Data:', formData);
-
     try {
       const response = await axios.post('http://localhost:5001/api/users/signup', formData);
 
@@ -39,18 +37,15 @@ const SignUp = () => {
 
         setTimeout(() => {
           setShowAlert(false);
-          navigate('/solar-cost-calculator'); // Redirect to the solar cost calculator page
+          navigate('/profile'); // Redirect to the profile page after signup
         }, 3000);
       }
     } catch (error) {
       if (error.response) {
-        // Server responded with a status other than 2xx
         setAlertMessage(error.response.data.message || 'Server error');
       } else if (error.request) {
-        // Request was made but no response received
         setAlertMessage('Network error. Please check your connection.');
       } else {
-        // Something else happened
         setAlertMessage('An unexpected error occurred.');
       }
       setShowAlert(true);
@@ -71,6 +66,7 @@ const SignUp = () => {
       )}
       <form onSubmit={handleSubmit} className="w-full max-w-sm bg-base-100 p-6 rounded-lg shadow-lg">
         <h2 className="text-2xl font-bold mb-4 text-center">Sign Up</h2>
+        {/* Input fields */}
         <div className="mb-4">
           <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
           <input
@@ -109,45 +105,55 @@ const SignUp = () => {
         </div>
         <div className="mb-4 relative">
           <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
-          <input
-            type={showPassword ? 'text' : 'password'}
-            id="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-            required
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute inset-y-0 right-0 flex items-center pr-3"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 text-gray-500 cursor-pointer"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              aria-hidden="true"
+          <div className="relative w-full">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 pr-12"
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 hover:text-indigo-500 transition-transform duration-300"
+              title={showPassword ? "Hide Password" : "Show Password"}
             >
               {showPassword ? (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M3.98 8.15A9.953 9.953 0 0112 4.5c5.25 0 9.75 4.5 9.75 10S17.25 25 12 25a9.953 9.953 0 01-8.02-4.85M4.5 12a7.5 7.5 0 0114 0 7.5 7.5 0 01-14 0z"
-                />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M13.875 18.825L12 16.125l-1.875 2.7a10 10 0 01-7.372-9.372m15.496-.001a10.001 10.001 0 01-7.373 9.373M12 6.125L13.875 3.75M12 6.125L10.125 3.75M9 12h6"
+                  />
+                </svg>
               ) : (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0zm4.2 3.8a8.4 8.4 0 10-11.4 0M19 19L5 5"
-                />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M15 12h.01M19.07 4.93a10 10 0 010 14.14M12 9a3 3 0 100 6 3 3 0 000-6zm0 10.93A10 10 0 014.93 4.93M12 2v.01"
+                  />
+                </svg>
               )}
-            </svg>
-          </button>
+            </button>
+          </div>
         </div>
         <div className="mb-6">
           <progress
@@ -162,7 +168,7 @@ const SignUp = () => {
             max="100"
           ></progress>
           <div className="text-xs mt-1">
-            Password Strength:  {passwordStrength.feedback ? passwordStrength.feedback.suggestions.join(' ') : 'N/A'}
+            Password Strength: {passwordStrength.feedback ? passwordStrength.feedback.suggestions.join(' ') : 'N/A'}
           </div>
         </div>
         <button

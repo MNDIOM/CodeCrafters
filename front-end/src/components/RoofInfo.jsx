@@ -17,7 +17,7 @@ const RoofInfo = () => {
       const { roofLocation } = JSON.parse(savedData);
       try {
         
-        const response = await axios.get(`https://solar.googleapis.com/v1/buildingInsights:findClosest?location.latitude=37.27AIzaSyA5trK873b55Yt3pmo1Z3rlrG9LITTEy46464&location.longitude=-121.7530949&key=iU`);
+        const response = await axios.get(`https://solar.googleapis.com/v1/buildingInsights:findClosest?location.latitude=37.27AIzaSyA5trK873b55Yt3pmo1Z3rlrG9LITTEy46464&location.longitude=-121.7530949&key=${process.env.GOOGLE_API_KEY}`);
         setRoofData(response.data);
       } catch (error) {
         console.error("Error fetching roof data: ", error);

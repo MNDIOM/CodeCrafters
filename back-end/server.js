@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const jwt = require('jsonwebtoken'); // Import JWT
+const jwt = require('jsonwebtoken');
 
 dotenv.config();
 
@@ -14,10 +14,16 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-// Import the authentication middleware
+// JWT Authentication Middleware
 const authenticateToken = require('./middleware/authMiddleware');
 
-// Nodemailer Transporter Setup
+// Import user routes
+const userRoutes = require('./routes/userRoutes'); // Ensure this path is correct
+
+// Use user routes
+app.use('/api/users', userRoutes);
+
+// Email Transporter
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -29,17 +35,21 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log('MongoDB connected'))
-.catch(err => console.error('Failed to connect to MongoDB', err));
+// MongoDB Connection
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => {
+    console.log('MongoDB connected');
+    
+    // Ensure admin commands only run after connection is established
+    mongoose.connection.db.admin().ping()
+      .then(() => console.log('MongoDB ping successful'))
+      .catch(err => console.error('MongoDB ping failed:', err));
+  })
+  .catch(err => console.error('Failed to connect to MongoDB:', err));
 
+// Other routes and functionality
 app.post('/api/send-message', async (req, res) => {
   const { name, email, message } = req.body;
-
   if (!name || !email || !message) {
     return res.status(400).json({ success: false, message: 'All fields are required.' });
   }
@@ -60,12 +70,11 @@ app.post('/api/send-message', async (req, res) => {
   }
 });
 
-app.use('/api/users', require('./routes/userRoutes')); // Include the user routes
-app.use('/api/sunroof', require('./routes/sunroofRoutes')); // Include the sunroof routes
-
+// JWT Protected Route
 app.get('/api/protected', authenticateToken, (req, res) => {
   res.json({ message: 'This is a protected route', user: req.user });
 });
 
+// Start the server
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

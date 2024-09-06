@@ -1,4 +1,4 @@
-// src/components/SolarCostCalculator.jsx
+
 import React, { useState } from 'react';
 
 const SolarCostCalculator = () => {

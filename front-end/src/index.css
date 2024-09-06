@@ -1,8 +1,9 @@
+/* @import './components/AddressAutocomplete.css'; */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import './components/AddressAutocomplete.css';
+
 
 .hero {
     background-image: url('https://www.tpdsolar.com/uploads/20230125/ab50c34864e836a366b5b43eb4a63de1.jpg');
