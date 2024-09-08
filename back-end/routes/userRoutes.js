@@ -22,7 +22,7 @@ router.post('/signup', async (req, res) => {
       return res.status(400).json({ message: 'Username or email already exists' });
     }
 
-    const salt = await bcrypt.genSalt(10);
+    const salt = await bcrypt.genSalt(12); // Increased salt rounds
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const newUser = new User({
@@ -54,15 +54,19 @@ router.post('/login', async (req, res) => {
 
     if (!user) {
       console.log('No user found with that identifier');
-      return res.status(400).json({ message: 'no user found' });
+      return res.status(400).json({ message: 'No user found' });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
+    
     console.log('Password match:', isMatch); // Log the result of the password comparison
 
+
     if (!isMatch) {
+      console.log(password)
+    console.log(user.password)
       console.log('Password does not match');
-      return res.status(400).json({ message: 'password does not match!' });
+      return res.status(400).json({ message: 'Password does not match!' });
     }
 
     const payload = { id: user._id, name: user.name, email: user.email, username: user.username };
@@ -75,8 +79,8 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// GET /profile - Fetch the user's profile data
-router.get('/profile', authenticateToken, async (req, res) => {
+// GET /UserProfile - Fetch the user's profile data
+router.get('/UserProfile', authenticateToken, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password'); // Exclude password
     if (!user) {
@@ -89,8 +93,8 @@ router.get('/profile', authenticateToken, async (req, res) => {
   }
 });
 
-// PUT /profile/address - Update the user's address
-router.put('/profile/address', authenticateToken, async (req, res) => {
+// PUT /UserProfile/address - Update the user's address
+router.put('/UserProfile/address', authenticateToken, async (req, res) => {
   const { address } = req.body;
 
   if (!address) {
@@ -113,18 +117,19 @@ router.put('/profile/address', authenticateToken, async (req, res) => {
   }
 });
 
-// POST /profile/solar - Get solar estimate for the user's address
-router.post('/profile/solar', authenticateToken, async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id);
-    if (!user || !user.address) {
-      return res.status(400).json({ message: 'Address is required' });
-    }
+// POST /UserProfile/solar-estimate - Get solar estimate for the user's address
+router.post('/UserProfile/solar-estimate', authenticateToken, async (req, res) => {
+  const { address, zipcode } = req.body;
 
+  if (!address || !zipcode) {
+    return res.status(400).json({ message: 'Address and zipcode are required' });
+  }
+
+  try {
     const response = await axios.get('https://www.googleapis.com/sunroof/v1/estimate', {
       params: {
-        address: user.address,
-        key: process.env.GOOGLE_API_KEY, // Make sure to set this in your .env file
+        address: `${address}, ${zipcode}`,
+        key: process.env.GOOGLE_API_KEY, // Ensure this is set in your .env file
       },
     });
 

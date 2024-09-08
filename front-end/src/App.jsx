@@ -12,16 +12,26 @@ import SolarCostCalculator from './components/SolarCostCalculator';
 import UserProfile from './components/UserProfile'; 
 import ProtectedRoute from './components/ProtectedRoute'; 
 import RoofInfo from './components/RoofInfo';
-import AddressAutocomplete from './components/AddressAutocomplete'; // Add this line
-import MapComponent from './components/MapComponent'; // Add this line
+
 import './index.css';
 import { useAuth } from './context/AuthContext'; 
+import { useState } from 'react'; 
+import axios from 'axios';
 
 function App() {
   const { logout } = useAuth();
-  const handleAddressSelect = (place) => {
+  const [solarData, setSolarData] = useState(null);
+
+  const handleAddressSelect = async (place) => {
     console.log('Selected Address:', place);
-    
+
+    try {
+      const response = await axios.post('/api/v1/fetch-solar-data', { address: place });
+      setSolarData(response.data);
+      console.log('Solar Data:', response.data);
+    } catch (error) {
+      console.error('Error fetching solar data:', error);
+    }
   };
 
   return (
@@ -36,13 +46,18 @@ function App() {
         <Route path="/solarInfos" element={<SolarInfos />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/solar-cost-calculator" element={<SolarCostCalculator />} />
-        <Route path="/user-profile" element={<ProtectedRoute element={<UserProfile />} />} /> {/* Protected Route */}
-        <Route path="/roof-info" element={<RoofInfo />} /> {/* New route for roof info */}
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <UserProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/SunRoofInfo" element={<RoofInfo />} />
       </Routes>
-      <AddressAutocomplete onAddressSelect={handleAddressSelect} /> {/* Add this line */}
-      <MapComponent /> {/* Add this line */}
       <Footer />
-      <button onClick={logout} className="logout-button">Logout</button> {/* Logout Button */}
+      <button onClick={logout} className="logout-button">Logout</button>
     </>
   );
 }

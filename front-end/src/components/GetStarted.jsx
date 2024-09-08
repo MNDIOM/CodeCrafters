@@ -1,11 +1,11 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom'; 
 
 function GetStarted() {
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate(); 
 
   const handleGetStartedClick = () => {
-    navigate('/questionnaire'); // Navigate to the Questionnaire page
+    navigate('/questionnaire'); 
   };
 
   return (
