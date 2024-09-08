@@ -21,7 +21,7 @@ function Footer() {
         <p>Copyright © {new Date().getFullYear()} - All rights reserved</p>
       </aside>
       <nav className="grid-flow-col gap-4 md:place-self-center md:justify-self-end">
-        <a href="https://twitter.com">
+        <a href="https://x.com/Sunvoltsolar">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -34,7 +34,7 @@ function Footer() {
             ></path>
           </svg>
         </a>
-        <a href="https://facebook.com">
+        <a href="https://youtu.be/cLR6ZpEr3P0">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -47,7 +47,7 @@ function Footer() {
             ></path>
           </svg>
         </a>
-        <a href="https://linkedin.com">
+        <a href="https://www.facebook.com/profile.php?id=61565653258446">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
