@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext'; // Assuming you have an AuthContext
+import { useAuth } from '../context/AuthContext';
 
 const UserProfile = () => {
   const [userData, setUserData] = useState(null);
@@ -9,26 +9,28 @@ const UserProfile = () => {
   const [error, setError] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [updatedData, setUpdatedData] = useState({ name: '', email: '', username: '' });
-  const [photo, setPhoto] = useState(null); // State for profile photo
-  const [photoPreview, setPhotoPreview] = useState(null); // State for photo preview
-  const [zipcode, setZipcode] = useState(''); // State for zipcode
-  const [address, setAddress] = useState(''); // State for address
-  const [solarEstimate, setSolarEstimate] = useState(null); // State for solar estimate
+  const [photo, setPhoto] = useState(null);
+  const [photoPreview, setPhotoPreview] = useState(null);
+  const [zipcode, setZipcode] = useState('');
+  const [address, setAddress] = useState('');
+  const [solarEstimate, setSolarEstimate] = useState(null);
   const navigate = useNavigate();
-  const { logout } = useAuth(); // Get the logout function from AuthContext
+  const { user, logout } = useAuth();
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get('/api/users/profile'); // Adjust the API endpoint as needed
+        const response = await axios.get('/api/users/profile');
+        console.log('User Data:', response.data); // Debugging line
         setUserData(response.data);
         setUpdatedData({ 
           name: response.data.name, 
           email: response.data.email, 
           username: response.data.username 
         });
-        setPhotoPreview(response.data.photo); // Set initial photo preview
+        setPhotoPreview(response.data.photo);
       } catch (err) {
+        console.error('Error fetching user data:', err); // Debugging line
         setError('Failed to load user data.');
       } finally {
         setLoading(false);
@@ -37,67 +39,6 @@ const UserProfile = () => {
 
     fetchUserData();
   }, []);
-
-  const handlePhotoChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setPhoto(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPhotoPreview(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleSave = async () => {
-    try {
-      // Create FormData to handle file upload
-      const formData = new FormData();
-      formData.append('name', updatedData.name);
-      formData.append('email', updatedData.email);
-      formData.append('username', updatedData.username);
-      if (photo) {
-        formData.append('photo', photo);
-      }
-      const response = await axios.put('/api/users/profile/update', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-      setUserData(response.data);
-      setEditMode(false);
-    } catch (err) {
-      setError('Failed to update user data.');
-    }
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setUpdatedData({ ...updatedData, [name]: value });
-  };
-
-  const handleLogout = () => {
-    logout(); // Log out the user
-    navigate('/'); // Redirect to home page
-  };
-
-  const handleDeleteAccount = async () => {
-    try {
-      await axios.delete('/api/users/profile/delete'); // Delete account API
-      logout();
-      navigate('/');
-    } catch (err) {
-      setError('Failed to delete account.');
-    }
-  };
-
-  const handleFetchSolarEstimate = async () => {
-    try {
-      const response = await axios.post('/api/users/profile/solar-estimate', { zipcode, address });
-      setSolarEstimate(response.data.solarEstimate);
-    } catch (err) {
-      setError('Failed to fetch solar estimate.');
-    }
-  };
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
@@ -117,7 +58,6 @@ const UserProfile = () => {
           <p><strong>Name:</strong> {userData.name}</p>
           <p><strong>Email:</strong> {userData.email}</p>
           <p><strong>Username:</strong> {userData.username}</p>
-          {/* Add more user details as needed */}
           <button
             onClick={() => setEditMode(true)}
             className="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
@@ -183,9 +123,8 @@ const UserProfile = () => {
       )}
       <div className="mt-6">
         <h2 className="text-xl font-semibold mb-4">Account Statistics</h2>
-        <p><strong>Last Login:</strong> {userData.lastLogin}</p>
-        <p><strong>Total Logins:</strong> {userData.totalLogins}</p>
-        {/* Add more stats as needed */}
+        <p><strong>Last Login:</strong> {userData?.lastLogin || 'N/A'}</p>
+        <p><strong>Total Logins:</strong> {userData?.totalLogins || 'N/A'}</p>
       </div>
       <div className="mt-6">
         <h2 className="text-xl font-semibold mb-4">Get Solar Estimate</h2>

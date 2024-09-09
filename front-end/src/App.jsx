@@ -57,7 +57,7 @@ function App() {
         <Route path="/SunRoofInfo" element={<RoofInfo />} />
       </Routes>
       <Footer />
-      <button onClick={logout} className="logout-button">Logout</button>
+      {/* <button onClick={logout} className="logout-button">Logout</button> */}
     </>
   );
 }
