@@ -43,8 +43,8 @@ function Contact() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
-      <h1 className="text-4xl font-bold mb-8 text-gray-800">Contact Us</h1>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-dark-blue-100 p-4">
+      <h1 className="text-4xl font-bold mb-8 text-black-800">Contact Us</h1>
       
       <form className="w-full max-w-lg bg-white shadow-lg rounded-lg p-8" onSubmit={handleSubmit}>
         {alert.message && (

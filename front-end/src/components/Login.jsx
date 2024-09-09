@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom'; // Import Link from react-router-dom
-import axios from 'axios'; 
+import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 const Login = () => {
   const [identifier, setIdentifier] = useState('');
@@ -46,7 +46,7 @@ const Login = () => {
   };
 
   return (
-    <div className="login-container flex justify-center items-center h-screen">
+    <div className="login-container flex justify-center items-center h-screen bg-gradient-to-r from-dark-blue-500 to-indigo-600 dark:from-midnight dark:to-midnight-dark">
       {showAlert && (
         <div className={`alert ${alertMessage.includes('error') ? 'alert-error' : 'alert-success'} mb-4`}>
           <div>
@@ -54,43 +54,50 @@ const Login = () => {
           </div>
         </div>
       )}
-      <form onSubmit={handleLogin} className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
-        <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
+      <form
+        onSubmit={handleLogin}
+        className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-2xl transform transition-all duration-500 hover:scale-105 w-full max-w-sm"
+        style={{ 
+          boxShadow: '0 10px 20px rgba(0, 0, 0, 0.25), 0 6px 6px rgba(0, 0, 0, 0.22)',
+          transform: 'translateY(-10px)' // Slight lift effect
+        }}
+      >
+        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800 dark:text-white">Login</h2>
         
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">Email or Username</label>
+          <label className="block text-gray-700 dark:text-gray-200 text-sm font-bold mb-2">Email or Username</label>
           <input
             type="text"
             placeholder="Enter your email or username"
             value={identifier}
             onChange={(e) => setIdentifier(e.target.value)}
-            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white transition-transform duration-200 transform hover:scale-105"
             required
           />
         </div>
         
         <div className="mb-4 relative">
-          <label className="block text-gray-700 text-sm font-bold mb-2">Password</label>
+          <label className="block text-gray-700 dark:text-gray-200 text-sm font-bold mb-2">Password</label>
           <input
-            type={showPassword ? "text" : "password"}
+            type={showPassword ? 'text' : 'password'}
             placeholder="Enter your password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white transition-transform duration-200 transform hover:scale-105 pr-12"
             required
           />
           <span
-            className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 cursor-pointer"
+            className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 cursor-pointer transition-transform duration-300 hover:scale-125 dark:text-white"
             onClick={() => setShowPassword(!showPassword)}
           >
-            {showPassword ? "🙈" : "👁️"}
+            {showPassword ? '🙈' : '👁️'}
           </span>
         </div>
         
         <div className="mb-4 text-right">
           <button
             type="button"
-            className="text-blue-500 hover:underline text-sm"
+            className="text-blue-500 dark:text-blue-400 hover:underline text-sm"
             onClick={() => setForgotPasswordVisible(!forgotPasswordVisible)}
           >
             Forgot Password?
@@ -99,17 +106,17 @@ const Login = () => {
         
         {forgotPasswordVisible && (
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Enter your email to reset password</label>
+            <label className="block text-gray-700 dark:text-gray-200 text-sm font-bold mb-2">Enter your email to reset password</label>
             <input
               type="email"
               placeholder="Enter your email"
               value={forgotPasswordEmail}
               onChange={(e) => setForgotPasswordEmail(e.target.value)}
-              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white transition-transform duration-200 transform hover:scale-105"
             />
             <button
               type="button"
-              className="mt-2 w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
+              className="mt-2 w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:bg-blue-600 shadow-lg transition-transform duration-200 transform hover:scale-105 dark:bg-blue-700 dark:hover:bg-blue-800"
               onClick={handleForgotPassword}
             >
               Reset Password
@@ -119,15 +126,15 @@ const Login = () => {
         
         <button
           type="submit"
-          className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
+          className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:bg-blue-600 shadow-lg transition-transform duration-200 transform hover:scale-105 dark:bg-blue-700 dark:hover:bg-blue-800"
         >
           Login
         </button>
 
         <div className="mt-4 text-center">
-          <p className="text-gray-600 text-sm">
+          <p className="text-gray-600 dark:text-gray-300 text-sm">
             Don't have an account?{' '}
-            <Link to="/signup" className="text-blue-500 hover:underline">
+            <Link to="/signup" className="text-blue-500 dark:text-blue-400 hover:underline">
               Sign Up
             </Link>
           </p>

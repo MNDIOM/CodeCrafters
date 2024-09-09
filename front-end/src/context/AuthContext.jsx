@@ -1,20 +1,18 @@
 import React, { createContext, useContext, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-
+import { useNavigate } from 'react-router-dom';
 
 const AuthContext = createContext();
 
-
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const navigate = useNavigate(); 
+  const navigate = useNavigate(); // Get navigate here
 
   const login = async (email, password) => {
     try {
       const response = await axios.post('/api/auth/login', { email, password });
       setUser(response.data.user);
-      navigate('/profile'); 
+      navigate('/profile');
     } catch (error) {
       console.error('Login error:', error);
     }
@@ -22,7 +20,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     setUser(null);
-    navigate('/'); 
+    navigate('/'); // Use navigate here
   };
 
   return (

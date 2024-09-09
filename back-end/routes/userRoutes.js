@@ -50,7 +50,7 @@ router.post('/login', async (req, res) => {
 
   try {
     const user = await User.findOne({ $or: [{ email: identifier }, { username: identifier }] });
-    console.log('User found:', user); // Log the found user
+    console.log('User found:', user); 
 
     if (!user) {
       console.log('No user found with that identifier');
@@ -59,7 +59,7 @@ router.post('/login', async (req, res) => {
 
     const isMatch = await bcrypt.compare(password, user.password);
     
-    console.log('Password match:', isMatch); // Log the result of the password comparison
+    console.log('Password match:', isMatch); 
 
 
     if (!isMatch) {

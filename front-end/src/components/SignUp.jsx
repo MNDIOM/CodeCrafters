@@ -56,16 +56,16 @@ const SignUp = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-base-200 p-4">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-dark-blue-50 to-indigo-50 p-4">
       {showAlert && (
-        <div className={`alert ${alertMessage.includes('error') ? 'alert-error' : 'alert-success'} mb-4`}>
+        <div className={`alert ${alertMessage.includes('error') ? 'alert-error' : 'alert-success'} mb-4 shadow-lg rounded-lg`}>
           <div>
             <span>{alertMessage}</span>
           </div>
         </div>
       )}
-      <form onSubmit={handleSubmit} className="w-full max-w-sm bg-base-100 p-6 rounded-lg shadow-lg">
-        <h2 className="text-2xl font-bold mb-4 text-center">Sign Up</h2>
+      <form onSubmit={handleSubmit} className="w-full max-w-sm bg-white p-6 rounded-lg shadow-2xl transform transition-transform duration-300 hover:scale-105">
+        <h2 className="text-2xl font-bold mb-4 text-center text-gray-800">Sign Up</h2>
         {/* Input fields */}
         <div className="mb-4">
           <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
@@ -75,7 +75,7 @@ const SignUp = () => {
             name="name"
             value={formData.name}
             onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-md focus:border-indigo-500 focus:ring-indigo-500"
             required
           />
         </div>
@@ -87,7 +87,7 @@ const SignUp = () => {
             name="email"
             value={formData.email}
             onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-md focus:border-indigo-500 focus:ring-indigo-500"
             required
           />
         </div>
@@ -99,7 +99,7 @@ const SignUp = () => {
             name="username"
             value={formData.username}
             onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-md focus:border-indigo-500 focus:ring-indigo-500"
             required
           />
         </div>
@@ -112,19 +112,18 @@ const SignUp = () => {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 pr-12"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-md focus:border-indigo-500 focus:ring-indigo-500 pr-12"
               required
             />
-            <button
-              type="button"
+            <span
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 hover:text-indigo-500 transition-transform duration-300"
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 cursor-pointer"
               title={showPassword ? "Hide Password" : "Show Password"}
             >
               {showPassword ? (
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
+                  className="h-6 w-6 text-gray-500"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -139,7 +138,7 @@ const SignUp = () => {
               ) : (
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
+                  className="h-6 w-6 text-gray-500"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -152,7 +151,7 @@ const SignUp = () => {
                   />
                 </svg>
               )}
-            </button>
+            </span>
           </div>
         </div>
         <div className="mb-6">
@@ -173,7 +172,7 @@ const SignUp = () => {
         </div>
         <button
           type="submit"
-          className={`w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
+          className={`w-full py-2 px-4 border border-transparent rounded-md shadow-lg text-sm font-medium text-white ${
             loading ? 'bg-gray-600' : 'bg-indigo-600 hover:bg-indigo-700'
           }`}
           disabled={loading}
