@@ -1,4 +1,5 @@
 import { Route, Routes } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Navbar from './components/Navbar';
 import Hero from './pages/Hero';
 import Questionnaire from './components/Questionnaire';
@@ -18,6 +19,9 @@ import { useAuth } from './context/AuthContext';
 import { useState } from 'react'; 
 import axios from 'axios';
 
+// Create a QueryClient instance
+const queryClient = new QueryClient();
+
 function App() {
   const { logout } = useAuth();
   const [solarData, setSolarData] = useState(null);
@@ -35,7 +39,7 @@ function App() {
   };
 
   return (
-    <>
+    <QueryClientProvider client={queryClient}>
       <Navbar />
       <Routes>
         <Route path="/" element={<Hero />} />
@@ -46,19 +50,19 @@ function App() {
         <Route path="/solarInfos" element={<SolarInfos />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/solar-cost-calculator" element={<SolarCostCalculator />} />
-        <Route
+        <Route path="/profile" element={<UserProfile />} />
+        {/* <Route
           path="/profile"
           element={
             <ProtectedRoute>
               <UserProfile />
             </ProtectedRoute>
           }
-        />
+        /> */}
         <Route path="/SunRoofInfo" element={<RoofInfo />} />
       </Routes>
       <Footer />
-      
-    </>
+    </QueryClientProvider>
   );
 }
 

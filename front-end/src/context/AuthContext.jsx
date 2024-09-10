@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -6,12 +6,37 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const navigate = useNavigate(); // Get navigate here
+  const navigate = useNavigate();
+
+  
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      
+      axios
+        .get('/api/auth/me', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          setUser(response.data.user);
+        })
+        .catch((error) => {
+          console.error('Error fetching user:', error);
+        });
+    }
+  }, []);
 
   const login = async (email, password) => {
     try {
       const response = await axios.post('/api/auth/login', { email, password });
-      setUser(response.data.user);
+      const { token, user } = response.data;
+
+      
+      localStorage.setItem('token', token);
+
+      setUser(user);
       navigate('/profile');
     } catch (error) {
       console.error('Login error:', error);
@@ -19,8 +44,10 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
+    
     setUser(null);
-    navigate('/'); // Use navigate here
+    localStorage.removeItem('token');
+    navigate('/');
   };
 
   return (
@@ -30,5 +57,5 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// Custom hook for using auth context
+
 export const useAuth = () => useContext(AuthContext);

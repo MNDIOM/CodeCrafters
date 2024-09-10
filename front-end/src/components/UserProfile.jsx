@@ -1,182 +1,209 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import RoofInfo from './RoofInfo';
+
+const fetchUserData = async () => {
+  const { data } = await axios.get('/api/users/profile');
+  return data;
+};
 
 const UserProfile = () => {
-  const [userData, setUserData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [editMode, setEditMode] = useState(false);
-  const [updatedData, setUpdatedData] = useState({ name: '', email: '', username: '' });
-  const [photo, setPhoto] = useState(null);
-  const [photoPreview, setPhotoPreview] = useState(null);
-  const [zipcode, setZipcode] = useState('');
-  const [address, setAddress] = useState('');
-  const [solarEstimate, setSolarEstimate] = useState(null);
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { data: userData, error, isLoading } = useQuery({
+    queryKey: ['userData'],
+    queryFn: fetchUserData,
+  });
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await axios.get('/api/users/profile');
-        console.log('User Data:', response.data); // Debugging line
-        setUserData(response.data);
-        setUpdatedData({ 
-          name: response.data.name, 
-          email: response.data.email, 
-          username: response.data.username 
-        });
-        setPhotoPreview(response.data.photo);
-      } catch (err) {
-        console.error('Error fetching user data:', err); // Debugging line
-        setError('Failed to load user data.');
-      } finally {
-        setLoading(false);
-      }
-    };
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [address, setAddress] = useState('');
+  const [zipcode, setZipcode] = useState('');
+  const [roofData, setRoofData] = useState(null);
+  const [name, setName] = useState(userData?.name || '');
+  const [email, setEmail] = useState(userData?.email || '');
+  const [profilePicture, setProfilePicture] = useState(userData?.profilePicture || '');
 
-    fetchUserData();
-  }, []);
+  if (isLoading) return <div className="text-center text-gray-500">Loading...</div>;
+  if (error) return <div className="text-center text-red-500">Error loading user data</div>;
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
+  const handleFindRoof = async () => {
+    try {
+      const response = await axios.get(`/api/sunroof?address=${address}&zipcode=${zipcode}`);
+      setRoofData(response.data);
+    } catch (error) {
+      console.error('Error fetching roof data:', error);
+    }
+  };
+
+  const handleProfilePictureChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfilePicture(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleProfileUpdate = async () => {
+    try {
+      await axios.put('/api/users/profile', { name, email, profilePicture });
+      navigate('/profile'); // Redirect to profile page after saving changes
+    } catch (error) {
+      console.error('Error updating profile:', error);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await axios.post('/api/users/logout');
+      navigate('/'); // Redirect to home page after logging out
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
+  };
 
   return (
-    <div className="user-profile p-4">
-      <h1 className="text-2xl font-bold mb-4">User Profile</h1>
-      {userData && !editMode ? (
-        <div className="profile-details">
-          {userData.photo && (
+    <div className="max-w-4xl mx-auto p-6 bg-gradient-to-r from-purple-400 via-blue-500 to-teal-500 text-white rounded-lg shadow-lg transform transition-transform hover:scale-105">
+      <h1 className="text-4xl font-bold mb-6 text-center">User Profile</h1>
+
+      {/* Toggle Edit Profile Form */}
+      <div className="text-center mb-6">
+        <button
+          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+          onClick={() => setIsEditingProfile(!isEditingProfile)}
+        >
+          {isEditingProfile ? 'Cancel Edit' : 'Edit Profile'}
+        </button>
+      </div>
+
+      {/* Profile Picture and Name */}
+      {!isEditingProfile ? (
+        <div className="flex flex-col items-center mb-8">
+          <div className="relative w-32 h-32 mb-4">
             <img
-              src={userData.photo}
+              src={profilePicture || 'https://via.placeholder.com/150'}
               alt="Profile"
-              className="w-24 h-24 rounded-full object-cover mb-4"
+              className="w-full h-full rounded-full border-4 border-white shadow-lg object-cover"
             />
-          )}
-          <p><strong>Name:</strong> {userData.name}</p>
-          <p><strong>Email:</strong> {userData.email}</p>
-          <p><strong>Username:</strong> {userData.username}</p>
-          <button
-            onClick={() => setEditMode(true)}
-            className="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
-          >
-            Edit Profile
-          </button>
+          </div>
+          <h2 className="text-2xl font-semibold">{name}</h2>
+          <p className="text-lg">{email}</p>
         </div>
       ) : (
-        <div className="profile-edit">
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">Profile Photo</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handlePhotoChange}
-              className="mt-1 block w-full"
-            />
-            {photoPreview && (
-              <img
-                src={photoPreview}
-                alt="Preview"
-                className="w-24 h-24 rounded-full object-cover mt-2"
+        <div className="mb-8">
+          <h2 className="text-xl font-semibold mb-4">Edit Profile</h2>
+          <form onSubmit={(e) => { e.preventDefault(); handleProfileUpdate(); }} className="space-y-4">
+            {/* Profile Picture */}
+            <div className="flex items-center space-x-4 mb-4">
+              <div className="relative w-32 h-32">
+                <img
+                  src={profilePicture || 'https://via.placeholder.com/150'}
+                  alt="Profile"
+                  className="w-full h-full rounded-full border-4 border-white shadow-lg object-cover"
+                />
+                <label htmlFor="profilePicture" className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100">
+                  <input
+                    type="file"
+                    id="profilePicture"
+                    accept="image/*"
+                    className="absolute inset-0 opacity-0 cursor-pointer"
+                    onChange={handleProfilePictureChange}
+                  />
+                  <div className="bg-black bg-opacity-50 p-2 rounded-full text-white">Change Picture</div>
+                </label>
+              </div>
+            </div>
+
+            {/* Name */}
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium">Name</label>
+              <input
+                type="text"
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="mt-1 block w-64 border border-gray-300 rounded-md p-2"
+                required
               />
-            )}
-          </div>
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">Name</label>
+            </div>
+
+            {/* Email */}
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium">Email</label>
+              <input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="mt-1 block w-64 border border-gray-300 rounded-md p-2"
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="w-full px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+            >
+              Save Changes
+            </button>
+          </form>
+        </div>
+      )}
+
+      {/* Address and Roof Info Section */}
+      <div className="p-6 bg-white text-gray-800 rounded-lg shadow-md">
+        <h2 className="text-xl font-semibold mb-4">Find Your Roof Data</h2>
+        <div className="space-y-4">
+          <div>
+            <label htmlFor="address" className="block text-sm font-medium">Address</label>
             <input
               type="text"
-              name="name"
-              value={updatedData.name}
-              onChange={handleInputChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+              id="address"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              className="mt-1 block w-64 border border-gray-300 rounded-md p-2"
+              placeholder="Enter your address"
             />
           </div>
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">Email</label>
-            <input
-              type="email"
-              name="email"
-              value={updatedData.email}
-              onChange={handleInputChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">Username</label>
+          <div>
+            <label htmlFor="zipcode" className="block text-sm font-medium">Zipcode</label>
             <input
               type="text"
-              name="username"
-              value={updatedData.username}
-              onChange={handleInputChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+              id="zipcode"
+              value={zipcode}
+              onChange={(e) => setZipcode(e.target.value)}
+              className="mt-1 block w-64 border border-gray-300 rounded-md p-2"
+              placeholder="Enter your zipcode"
             />
           </div>
           <button
-            onClick={handleSave}
-            className="mt-4 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"
+            className="w-full px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors"
+            onClick={handleFindRoof}
           >
-            Save Changes
+            Let's Find Your Roof
           </button>
         </div>
-      )}
-      <div className="mt-6">
-        <h2 className="text-xl font-semibold mb-4">Account Statistics</h2>
-        <p><strong>Last Login:</strong> {userData?.lastLogin || 'N/A'}</p>
-        <p><strong>Total Logins:</strong> {userData?.totalLogins || 'N/A'}</p>
-      </div>
-      <div className="mt-6">
-        <h2 className="text-xl font-semibold mb-4">Get Solar Estimate</h2>
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">Zipcode</label>
-          <input
-            type="text"
-            value={zipcode}
-            onChange={(e) => setZipcode(e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">Address</label>
-          <input
-            type="text"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-          />
-        </div>
-        <button
-          onClick={handleFetchSolarEstimate}
-          className="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
-        >
-          Get Solar Estimate
-        </button>
-        {solarEstimate && (
+
+        {/* Display Roof Information */}
+        {roofData && (
           <div className="mt-4">
-            <h3 className="text-lg font-semibold">Solar Estimate:</h3>
-            <pre>{JSON.stringify(solarEstimate, null, 2)}</pre>
+            <RoofInfo roofData={roofData} />
           </div>
         )}
       </div>
-      <button
-        onClick={() => navigate('/solar-cost-calculator')}
-        className="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
-      >
-        Go to Solar Calculator
-      </button>
-      <button
-        onClick={handleLogout}
-        className="mt-4 bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
-      >
-        Logout
-      </button>
-      <button
-        onClick={handleDeleteAccount}
-        className="mt-4 bg-red-700 text-white py-2 px-4 rounded hover:bg-red-800"
-      >
-        Delete Account
-      </button>
+
+      {/* Logout Button */}
+      <div className="text-center mt-6">
+        <button
+          className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
+          onClick={handleLogout}
+        >
+          Logout
+        </button>
+      </div>
     </div>
   );
 };
