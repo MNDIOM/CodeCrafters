@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const Login = () => {
@@ -10,6 +10,7 @@ const Login = () => {
   const [forgotPasswordVisible, setForgotPasswordVisible] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
   const [showAlert, setShowAlert] = useState(false);
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -25,6 +26,13 @@ const Login = () => {
       if (response.status === 200) {
         setAlertMessage('Login successful!');
         setShowAlert(true);
+
+        setTimeout(() => {
+          setShowAlert(false);
+          navigate('/profile'); // Redirect to the profile page after signup
+        }, 3000);
+
+
       }
     } catch (error) {
       if (error.response) {
