@@ -1,8 +1,23 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { FaUserCircle } from 'react-icons/fa';
 import ThemeToggle from './ThemeToggle';
 
 const Navbar = () => {
+  const navigate = useNavigate();
+  
+  // Check if the user is logged in
+  const isLoggedIn = Boolean(localStorage.getItem('authToken')); // Adjust based on your auth mechanism
+
+  // Function to handle profile icon click
+  const handleProfileClick = () => {
+    if (isLoggedIn) {
+      navigate('/profile');
+    } else {
+      navigate('/login');
+    }
+  };
+
   const logoUrl =
     'https://scontent-lga3-1.xx.fbcdn.net/v/t39.30808-6/459012995_122096685164521775_8635025157072592808_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=127cfc&_nc_ohc=rYhXHhOGJDQQ7kNvgGTxA2N&_nc_ht=scontent-lga3-1.xx&_nc_gid=AdbMt1w0OGiZUNGlaODpxcy&oh=00_AYCl7mHD3fxZDZc-THqYVEki3Pl4wVe_5xGHwastZSnYLQ&oe=66E45BC3';
 
@@ -27,7 +42,13 @@ const Navbar = () => {
       </div>
       <div className="navbar-end flex items-center">
         <ThemeToggle />
-        <Link to="/login" className="btn btn-3d">Login</Link>
+        <button
+          className="btn btn-icon"
+          onClick={handleProfileClick}
+        >
+          <FaUserCircle className="text-xl" />
+        </button>
+        <Link to="/login" className="btn btn-3d ml-2">Login</Link>
         <Link to="/signup" className="btn btn-primary btn-3d ml-2">Sign Up</Link>
       </div>
     </div>

@@ -1,15 +1,21 @@
-// Hero.jsx
 import React from 'react';
 import '../index.css'; // Adjust the path as needed
 
 const Hero = () => {
   return (
-    <section className="hero">
-      <div className="container mx-auto text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Our Website</h1>
-        <p className="text-lg mb-8">We are excited to have you here. Explore our features and get started!</p>
-        <a href="/questionnaire" className="btn btn-primary">Get Started</a>
+    <section className="hero relative">
+      <div className="container mx-auto text-center transform hover:scale-105 transition-all duration-500 ease-in-out z-10">
+        <h1 className="text-6xl font-extrabold mb-4 futuristic-title">
+          Welcome to Our Website
+        </h1>
+        <p className="text-xl mb-8 futuristic-text">
+          We are excited to have you here. Explore our features and get started!
+        </p>
+        <a href="/questionnaire" className="neon-button px-8 py-4 text-lg font-bold text-white rounded-lg transform hover:translate-y-1 transition-all duration-300 ease-in-out">
+          Get Started
+        </a>
       </div>
+      <div className="absolute inset-0 hero-overlay"></div>
     </section>
   );
 };
