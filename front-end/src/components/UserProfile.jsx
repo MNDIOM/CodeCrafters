@@ -58,8 +58,17 @@ const UserProfile = () => {
 
   const handleLogout = async () => {
     try {
+      // Clear authentication data
+      localStorage.removeItem('authToken'); // Adjust based on your storage mechanism
+
+      // Optionally, clear cookies if you're using them for auth
+      // document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+
+      // Send a logout request to the server if needed
       await axios.post('/api/users/logout');
-      navigate('/'); // Redirect to home page after logging out
+
+      // Redirect to the home page
+      navigate('/');
     } catch (error) {
       console.error('Error logging out:', error);
     }
@@ -67,7 +76,7 @@ const UserProfile = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-gradient-to-r from-purple-400 via-blue-500 to-teal-500 text-white rounded-lg shadow-lg transform transition-transform hover:scale-105">
-      <h1 className="text-4xl font-bold mb-6 text-center">User Profile</h1>
+      <h1 className="text-4xl font-bold mb-6 text-center">My Profile</h1>
 
       {/* Toggle Edit Profile Form */}
       <div className="text-center mb-6">

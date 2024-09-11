@@ -56,101 +56,79 @@ const SignUp = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-dark-blue-50 to-indigo-50 p-4">
+    <div className="sign-up-container flex justify-center items-center h-screen bg-gradient-to-r from-dark-blue-500 to-indigo-600 dark:from-midnight dark:to-midnight-dark relative overflow-hidden">
       {showAlert && (
-        <div className={`alert ${alertMessage.includes('error') ? 'alert-error' : 'alert-success'} mb-4 shadow-lg rounded-lg`}>
+        <div className={`alert ${alertMessage.includes('error') ? 'alert-error' : 'alert-success'} mb-4 absolute top-4`}>
           <div>
             <span>{alertMessage}</span>
           </div>
         </div>
       )}
-      <form onSubmit={handleSubmit} className="w-full max-w-sm bg-white p-6 rounded-lg shadow-2xl transform transition-transform duration-300 hover:scale-105">
-        <h2 className="text-2xl font-bold mb-4 text-center text-gray-800">Sign Up</h2>
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-3xl transform transition-all duration-500 hover:scale-105 w-full max-w-md"
+        style={{ 
+          boxShadow: '0 15px 30px rgba(0, 234, 255, 0.3), 0 5px 15px rgba(0, 234, 255, 0.2)',
+          transform: 'translateY(-10px)', 
+          backdropFilter: '(10px)', 
+        }}
+      >
+        <h2 className="text-3xl font-bold mb-6 text-center text-gray-800 dark:text-white futuristic-title">Sign Up</h2>
         {/* Input fields */}
         <div className="mb-4">
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
+          <label className="block text-gray-700 dark:text-gray-200 text-sm font-bold mb-2">Name</label>
           <input
             type="text"
-            id="name"
             name="name"
             value={formData.name}
             onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-md focus:border-indigo-500 focus:ring-indigo-500"
+            placeholder="Enter your name"
+            className="w-full px-3 py-3 border rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white transition-transform duration-300 transform hover:scale-105 futuristic-input"
             required
           />
         </div>
         <div className="mb-4">
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+          <label className="block text-gray-700 dark:text-gray-200 text-sm font-bold mb-2">Email</label>
           <input
             type="email"
-            id="email"
             name="email"
             value={formData.email}
             onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-md focus:border-indigo-500 focus:ring-indigo-500"
+            placeholder="Enter your email"
+            className="w-full px-3 py-3 border rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white transition-transform duration-300 transform hover:scale-105 futuristic-input"
             required
           />
         </div>
         <div className="mb-4">
-          <label htmlFor="username" className="block text-sm font-medium text-gray-700">Username</label>
+          <label className="block text-gray-700 dark:text-gray-200 text-sm font-bold mb-2">Username</label>
           <input
             type="text"
-            id="username"
             name="username"
             value={formData.username}
             onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-md focus:border-indigo-500 focus:ring-indigo-500"
+            placeholder="Enter your username"
+            className="w-full px-3 py-3 border rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white transition-transform duration-300 transform hover:scale-105 futuristic-input"
             required
           />
         </div>
         <div className="mb-4 relative">
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+          <label className="block text-gray-700 dark:text-gray-200 text-sm font-bold mb-2">Password</label>
           <div className="relative w-full">
             <input
               type={showPassword ? 'text' : 'password'}
-              id="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-md focus:border-indigo-500 focus:ring-indigo-500 pr-12"
+              placeholder="Enter your password"
+              className="w-full px-3 py-3 border rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white transition-transform duration-300 transform hover:scale-105 futuristic-input pr-12"
               required
             />
             <span
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 cursor-pointer"
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 cursor-pointer transition-transform duration-300 hover:scale-125 dark:text-white"
               title={showPassword ? "Hide Password" : "Show Password"}
             >
-              {showPassword ? (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 text-gray-500"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M13.875 18.825L12 16.125l-1.875 2.7a10 10 0 01-7.372-9.372m15.496-.001a10.001 10.001 0 01-7.373 9.373M12 6.125L13.875 3.75M12 6.125L10.125 3.75M9 12h6"
-                  />
-                </svg>
-              ) : (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 text-gray-500"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M15 12h.01M19.07 4.93a10 10 0 010 14.14M12 9a3 3 0 100 6 3 3 0 000-6zm0 10.93A10 10 0 014.93 4.93M12 2v.01"
-                  />
-                </svg>
-              )}
+              {showPassword ? '🙈' : '👁️'}
             </span>
           </div>
         </div>
@@ -172,9 +150,9 @@ const SignUp = () => {
         </div>
         <button
           type="submit"
-          className={`w-full py-2 px-4 border border-transparent rounded-md shadow-lg text-sm font-medium text-white ${
-            loading ? 'bg-gray-600' : 'bg-indigo-600 hover:bg-indigo-700'
-          }`}
+          className={`w-full py-3 px-4 rounded-lg shadow-lg transition-transform duration-300 transform hover:scale-105 ${
+            loading ? 'bg-gray-600' : 'bg-blue-500 hover:bg-blue-600'
+          } text-white text-sm font-medium`}
           disabled={loading}
         >
           {loading ? 'Signing Up...' : 'Sign Up'}
