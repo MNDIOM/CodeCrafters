@@ -4,23 +4,17 @@ import Navbar from './components/Navbar';
 import Hero from './pages/Hero';
 import Questionnaire from './components/Questionnaire';
 import Footer from './components/Footer';
-import Login from './components/Login'; 
+import Login from './components/Login';
 import About from './pages/About';
 import SolarInfos from './pages/SolarInfos';
 import Contact from './pages/Contact';
 import SignUp from './components/SignUp';
 import SolarCostCalculator from './components/SolarCostCalculator';
-import UserProfile from './components/UserProfile'; 
-import ProtectedRoute from './components/ProtectedRoute'; 
+import UserProfile from './components/UserProfile';
+import ProtectedRoute from './components/ProtectedRoute';
 import RoofInfo from './components/RoofInfo';
-
 import './index.css';
-import { useAuth } from './context/AuthContext'; 
-import { useState } from 'react'; 
-import axios from 'axios';
-
-// Create a QueryClient instance
-const queryClient = new QueryClient();
+import { useAuth } from './context/AuthContext';
 
 function App() {
   const { logout } = useAuth();
@@ -28,14 +22,6 @@ function App() {
 
   const handleAddressSelect = async (place) => {
     console.log('Selected Address:', place);
-
-    try {
-      const response = await axios.post('/api/v1/fetch-solar-data', { address: place });
-      setSolarData(response.data);
-      console.log('Solar Data:', response.data);
-    } catch (error) {
-      console.error('Error fetching solar data:', error);
-    }
   };
 
   return (
