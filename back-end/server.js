@@ -1,18 +1,22 @@
-const dotenv = require('dotenv');
+require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
 const mongoose = require('mongoose');
+const axios = require('axios');
+const router = require('./routes/sunroofRoutes.js');
 const cors = require('cors');
+const BuildingInsights = require('./models/buildinginsight');
 const jwt = require('jsonwebtoken'); // Import JWT
 
-dotenv.config();
 
 const app = express();
 
 // Middleware
 app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb' }));
+app.use("/api/v1", router);
 
 // Import the authentication middleware
 const authenticateToken = require('./middleware/authMiddleware');
@@ -34,8 +38,8 @@ mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-.then(() => console.log('MongoDB connected'))
-.catch(err => console.error('Failed to connect to MongoDB', err));
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.error('Failed to connect to MongoDB', err));
 
 app.post('/api/send-message', async (req, res) => {
   const { name, email, message } = req.body;
@@ -61,7 +65,8 @@ app.post('/api/send-message', async (req, res) => {
 });
 
 app.use('/api/users', require('./routes/userRoutes')); // Include the user routes
-app.use('/api/sunroof', require('./routes/sunroofRoutes')); // Include the sunroof routes
+app.use('/api/sunroof', require('./routes/sunroofRoutes.js')); // Include the sunroof routes
+
 
 app.get('/api/protected', authenticateToken, (req, res) => {
   res.json({ message: 'This is a protected route', user: req.user });
