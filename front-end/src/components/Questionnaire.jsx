@@ -1,5 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
+import SunshineQuantilesChart from './SunshineQuantilesChart';
+import MapView from './MapView';
+
+
 
 function Questionnaire() {
   const [step, setStep] = useState(1);
@@ -18,48 +22,86 @@ function Questionnaire() {
     roofMoreThan20Years: false
   });
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [SolarData, setSolarData] = useState();
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleCheckboxChange = (e) => {
     const { name, value, checked } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: checked
-        ? [...prevData[name], value]
-        : prevData[name].filter(item => item !== value)
+      [name]: Array.isArray(prevData[name])
+        ? checked
+          ? [...prevData[name], value]
+          : prevData[name].filter(item => item !== value)
+        : []
     }));
   };
 
   const handleSingleCheckboxChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.checked });
+    const { name, checked } = e.target;
+    setFormData({ ...formData, [name]: checked });
   };
 
   const handleSliderChange = (e) => {
-    setFormData({ ...formData, electricBill: e.target.value });
+    setFormData({ ...formData, electricBill: parseInt(e.target.value, 10) });
   };
 
-  const handleSubmit = () => {
-    axios.post('/api/questionnaire', formData)
-      .then(response => {
-        console.log('Form submitted:', response.data);
-        setSubmitted(true);
-      })
-      .catch(error => {
-        console.error('Error submitting form:', error);
-      });
+  const handleSubmit = async () => {
+    try {
+      const response = await axios.post('/api/questionnaire', formData);
+      console.log('Form submitted:', response.data);
+      setSubmitted(true);
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    }
   };
 
-  const handleAddressSubmit = () => {
-    const encodedAddress = encodeURIComponent(formData.address);
-    window.location.href = `https://solar.googleapis.com/v1/buildingInsights:findClosest?address=${encodedAddress}&apikey=YOUR_API_KEY`;
+  // const handleAddressSubmit = async () => {
+  //   const address = formData.address;
+  //   setLoading(true);
+  //   try {
+  //     const response = await axios.post('/api/v1/SolarData', { address });
+  //     setSolarData(response.data);
+  //     console.log('Solar data:', response.data);
+  //   } catch (error) {
+  //     console.error('Error fetching solar data:', error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   // Call handleAddressSubmit if needed on component mount
+  //   // handleAddressSubmit();
+  // }, []);
+
+
+  const handleAddressSubmit = async () => {
+    const address = formData.address;
+    setLoading(true);
+    try {
+      const response = await axios.post('/api/v1/SolarData', { address });
+      setSolarData(response.data);
+      console.log('Solar data:', response.data);
+    } catch (error) {
+      console.error('Error fetching solar data:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleNext = () => {
     if (!isNextButtonDisabled()) {
-      setStep(step + 1);
+      if (step === 11) {
+        handleSubmit(); // Assuming step 11 is the final step
+      } else {
+        setStep(step + 1);
+      }
     }
   };
 
@@ -86,7 +128,7 @@ function Questionnaire() {
       case 10:
         return !formData.address;
       case 11:
-        return formData.roofMoreThan20Years === undefined;
+        return formData.roofMoreThan20Years === false; // Corrected
       default:
         return false;
     }
@@ -393,12 +435,20 @@ function Questionnaire() {
             >
               Let's find your roof
             </button>
-          </div>
-        )}
+            {loading && <p>Loading...</p>}
+            {SolarData && (
+              <div>
+                <h3 className="text-xl font-semibold mt-4">Solar Data Visualization:</h3>
+                <MapView latitude={SolarData.center.latitude} longitude={SolarData.center.longitude} />
+                <SunshineQuantilesChart sunshineQuantiles={SolarData.solarPotential.wholeRoofStats.sunshineQuantiles} />
 
-        {submitted && (
-          <div>
-            <h2 className="text-2xl font-bold mb-4">Thank you for submitting the questionnaire!</h2>
+              </div>
+            )}
+            {submitted && (
+              <div>
+                <h2 className="text-2xl font-bold mb-4">Thank you for submitting the questionnaire!</h2>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -407,3 +457,5 @@ function Questionnaire() {
 }
 
 export default Questionnaire;
+
+

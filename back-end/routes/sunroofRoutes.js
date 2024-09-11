@@ -49,24 +49,6 @@ router.get('/SolarData', async (req, res) => {
 });
 
 
-
-// router.post('/SolarData', async (req, res) => {
-//     const { address } = req.body;
-
-//     try {
-//         if (!address) {
-//             return res.status(400).json({ error: 'Address is required' });
-//         }
-
-//         const { lat, long } = await getLongLatData(address);
-//         const SolarData = await getSolarData(lat, long);
-
-//         res.status(200).json(SolarData);
-//     } catch (error) {
-//         res.status(500).json({ error: 'Failed to fetch solar data' });
-//     }
-// });
-
 // Route to post solar data based on user-provided address
 router.post('/SolarData', async (req, res) => {
     const { address } = req.body;
@@ -84,6 +66,8 @@ router.post('/SolarData', async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch solar data' });
     }
 });
+
+
 router.post("/buildinginsights", async (req, res) => {
     const Addressrequest = req.body;
     const buildinginsight = new BuildingInsights({ BuildingInsights: Addressrequest });
@@ -92,7 +76,7 @@ router.post("/buildinginsights", async (req, res) => {
     res.status(200).json({ buildinginsight });
 });
 
-// Getting dataLayers 
+//Getting dataLayers 
 
 async function getLongLatData(address) {
     try {
@@ -110,8 +94,6 @@ async function getLongLatData(address) {
     }
 }
 
-
-
 async function getDataLayers(lat, long) {
     try {
         const response = await fetch(`https://solar.googleapis.com/v1/dataLayers:get?location.latitude=${lat}&location.longitude=${long}&radiusMeters=100&view=FULL_LAYERS&requiredQuality=HIGH&exactQualityRequired=true&pixelSizeMeters=0.5&key=${apikey}`);
@@ -127,33 +109,11 @@ async function getDataLayers(lat, long) {
 router.get('/DataLayers', async (req, res) => {
 
     const { lat, long } = await getLongLatData("1171 Lane Ave S. Jacksonville, FL 32205")
-    const DataLayers = await getDataLayers(lat, long, apikey)
+    const DataLayers = await getDataLayers(lat, long)
     res.json(DataLayers);
 });
 
-// async function getDataLayers(geoTiff) {
-//     try {
-//         const response = await fetch(`https://solar.googleapis.com/v1/solar/geoTiff:get?id=${geoTiff}&key=${apikey}`);
-//         const data = await response.json();
-//         console.log(data)
-//         return data;
-//     } catch (error) {
-//         console.error('Error fetching datalayers:', error);
-//         return 'Error getting solar data layers';
-//     }
-// }
-
-// router.get('/DataLayers/', async (req, res) => {
-
-//     const { geoTiff } = await getDataLayers(address)
-//     const DataLayers = await getDataLayers(geoTiff, apikey)
-//     res.json(DataLayers);
-// });
-
-
-
-
-router.post('/DataLayres', async (req, res) => {
+router.post('/DataLayers', async (req, res) => {
     const { address } = req.body;
 
     try {
@@ -162,8 +122,7 @@ router.post('/DataLayres', async (req, res) => {
         }
 
         const { lat, long } = await getLongLatData(address);
-
-        const DataLayers = await getDataLayers(geoTiff, apikey)
+        const DataLayers = await getDataLayers(lat, long);
 
         res.status(200).json(DataLayers);
     } catch (error) {
@@ -171,21 +130,45 @@ router.post('/DataLayres', async (req, res) => {
     }
 });
 
-// router.get('/get-roof-measurements', async (req, res) => {
-//     res.send('Roof Measurements');
+
+// async function getDataGeotiff(geoTiff) {
+//     try {
+//         const response = await fetch(`https://solar.googleapis.com/v1/solar/geoTiff:get?id=${}&key=${apikey}`);
+//         const data = await response.data();
+//         console.log(data)
+//         return data;
+//     } catch (error) {
+//         console.error('Error fetching datalayers:', error);
+//         return 'Error getting solar data layers';
+//     }
+// }
+
+// router.get('/DataGeotiff/', async (req, res) => {
+
+//     const { geoTiff } = await getLongLatData("1171 Lane Ave S. Jacksonville, FL 32205")
+//     const DataGeotiff = await getDataGeotiff(geoTiff)
+//     res.json(DataGeotiff);
 // });
 
-// router.post('/calculate-panel-size', (req, res) => {
-//     const { roofArea, panelEfficiency } = req.body;
-//     const size = calculatePanelSize(roofArea, panelEfficiency);
-//     res.json({ panelSize: size });
+
+// router.post('/DataLayres', async (req, res) => {
+//     const { address } = req.body;
+
+//     try {
+//         if (!address) {
+//             return res.status(400).json({ error: 'Address is required' });
+//         }
+
+//         const { lat, long } = await getLongLatData(address);
+
+//         const DataLayers = await getDataLayers(lat, long)
+
+//         res.status(200).json(DataLayers);
+//     } catch (error) {
+//         res.status(500).json({ error: 'Failed to fetch solar data' });
+//     }
 // });
 
-// router.get('/compare-bills', (req, res) => {
-//     const { electricityBill, solarEnergyBill } = req.query;
-//     const comparison = compareBills(electricityBill, solarEnergyBill);
-//     res.json({ savings: comparison });
-// });
 
 router.get("/test", (req, res) => {
     res.status(200).json({ message: "good job" });
