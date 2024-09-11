@@ -6,7 +6,7 @@ const Hero = () => {
     <section className="hero relative">
       <div className="container mx-auto text-center transform hover:scale-105 transition-all duration-500 ease-in-out z-10">
         <h1 className="text-6xl font-extrabold mb-4 futuristic-title">
-          Welcome to Our Website
+          Welcome to Sunvolt
         </h1>
         <p className="text-xl mb-8 futuristic-text">
           We are excited to have you here. Explore our features and get started!
