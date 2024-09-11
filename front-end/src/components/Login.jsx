@@ -29,7 +29,7 @@ const Login = () => {
 
         setTimeout(() => {
           setShowAlert(false);
-          navigate('/profile'); // Redirect to the profile page after login
+          navigate('/profile'); 
         }, 3000);
       }
     } catch (error) {
@@ -68,11 +68,11 @@ const Login = () => {
         className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-3xl transform transition-all duration-500 hover:scale-105 w-full max-w-md"
         style={{ 
           boxShadow: '0 15px 30px rgba(0, 234, 255, 0.3), 0 5px 15px rgba(0, 234, 255, 0.2)',
-          transform: 'translateY(-10px)', // Slight lift effect
-          backdropFilter: 'blur(10px)', // Glassmorphism effect
+          transform: 'translateY(-10px)', 
+          backdropFilter: '(10px)', 
         }}
       >
-        <h2 className="text-3xl font-extrabold mb-6 text-center text-gray-800 dark:text-white futuristic-title">Login</h2>
+        <h2 className="text-3xl font-bold mb-6 text-center text-gray-800 dark:text-white futuristic-title">Login</h2>
         
         {/* Identifier (Email or Username) */}
         <div className="mb-4">

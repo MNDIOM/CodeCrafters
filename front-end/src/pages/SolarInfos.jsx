@@ -32,7 +32,7 @@ const SolarInfos = () => {
 
         {/* Interactive Solar Calculator */}
         <section className="mt-16">
-          <h2 className="text-3xl font-bold text-white mb-6">Interactive Solar Calculator</h2>
+          <h2 className="text-3xl font-bold text-white mb-6">Solar Calculator</h2>
           <NewSolarCalculator />
         </section>
 
