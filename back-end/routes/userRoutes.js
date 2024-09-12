@@ -1,12 +1,26 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const multer = require('multer');
+const path = require('path');
 const User = require('../models/User');
-const authenticateToken = require('../middleware/authMiddleware'); 
+const authenticateToken = require('../middleware/authMiddleware');
 require('dotenv').config();
 const axios = require('axios');
 
 const router = express.Router();
+
+// Configure multer for file uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/'); // Directory to save uploaded files
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname)); // Unique filename
+  },
+});
+
+const upload = multer({ storage });
 
 // POST /signup - Route to handle user signup
 router.post('/signup', async (req, res) => {
@@ -22,7 +36,7 @@ router.post('/signup', async (req, res) => {
       return res.status(400).json({ message: 'Username or email already exists' });
     }
 
-    const salt = await bcrypt.genSalt(10);
+    const salt = await bcrypt.genSalt(12); // Increased salt rounds for hashing
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const newUser = new User({
@@ -50,19 +64,15 @@ router.post('/login', async (req, res) => {
 
   try {
     const user = await User.findOne({ $or: [{ email: identifier }, { username: identifier }] });
-    console.log('User found:', user); // Log the found user
 
     if (!user) {
-      console.log('No user found with that identifier');
-      return res.status(400).json({ message: 'no user found' });
+      return res.status(400).json({ message: 'No user found' });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
-    console.log('Password match:', isMatch); // Log the result of the password comparison
 
     if (!isMatch) {
-      console.log('Password does not match');
-      return res.status(400).json({ message: 'password does not match!' });
+      return res.status(400).json({ message: 'Password does not match' });
     }
 
     const payload = { id: user._id, name: user.name, email: user.email, username: user.username };
@@ -75,8 +85,8 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// GET /profile - Fetch the user's profile data
-router.get('/profile', authenticateToken, async (req, res) => {
+// GET /UserProfile - Fetch the user's profile data
+router.get('/UserProfile', authenticateToken, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password'); // Exclude password
     if (!user) {
@@ -89,8 +99,36 @@ router.get('/profile', authenticateToken, async (req, res) => {
   }
 });
 
-// PUT /profile/address - Update the user's address
-router.put('/profile/address', authenticateToken, async (req, res) => {
+// PUT /UserProfile - Update the user's profile data
+router.put('/UserProfile', authenticateToken, upload.single('photo'), async (req, res) => {
+  const { name, email, username } = req.body;
+  const photo = req.file ? `/uploads/${req.file.filename}` : null; // Get the path of the uploaded photo
+
+  if (!name || !email || !username) {
+    return res.status(400).json({ message: 'All fields are required' });
+  }
+
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    user.name = name;
+    user.email = email;
+    user.username = username;
+    if (photo) user.photo = photo; // Update photo if a new one is provided
+
+    await user.save();
+    res.status(200).json({ message: 'Profile updated successfully' });
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// PUT /UserProfile/address - Update the user's address
+router.put('/UserProfile/address', authenticateToken, async (req, res) => {
   const { address } = req.body;
 
   if (!address) {
@@ -113,18 +151,19 @@ router.put('/profile/address', authenticateToken, async (req, res) => {
   }
 });
 
-// POST /profile/solar - Get solar estimate for the user's address
-router.post('/profile/solar', authenticateToken, async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id);
-    if (!user || !user.address) {
-      return res.status(400).json({ message: 'Address is required' });
-    }
+// POST /UserProfile/solar-estimate - Get solar estimate for the user's address
+router.post('/UserProfile/solar-estimate', authenticateToken, async (req, res) => {
+  const { address, zipcode } = req.body;
 
+  if (!address || !zipcode) {
+    return res.status(400).json({ message: 'Address and zipcode are required' });
+  }
+
+  try {
     const response = await axios.get('https://www.googleapis.com/sunroof/v1/estimate', {
       params: {
-        address: user.address,
-        key: process.env.GOOGLE_API_KEY, // Make sure to set this in your .env file
+        address: `${address}, ${zipcode}`,
+        key: process.env.GOOGLE_API_KEY, // Ensure this is set in your .env file
       },
     });
 
