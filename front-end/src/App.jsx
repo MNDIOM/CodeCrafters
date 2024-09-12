@@ -13,8 +13,15 @@ import SolarCostCalculator from './components/SolarCostCalculator';
 import UserProfile from './components/UserProfile';
 import ProtectedRoute from './components/ProtectedRoute';
 import RoofInfo from './components/RoofInfo';
+import AddressAutocomplete from './components/AddressAutocomplete'; // Add this line
+import MapComponent from './components/MapComponent'; // Add this line
 import './index.css';
 import { useAuth } from './context/AuthContext';
+import { useState } from 'react';
+import axios from 'axios';
+
+// Create a QueryClient instance
+const queryClient = new QueryClient();
 
 function App() {
   const { logout } = useAuth();
@@ -22,6 +29,7 @@ function App() {
 
   const handleAddressSelect = async (place) => {
     console.log('Selected Address:', place);
+
   };
 
   return (

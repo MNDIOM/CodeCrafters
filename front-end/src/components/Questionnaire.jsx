@@ -127,7 +127,7 @@ function Questionnaire() {
       case 10:
         return !formData.address;
       case 11:
-        return formData.roofMoreThan20Years === false; // Corrected
+        return formData.roofMoreThan20Years === undefined;
       default:
         return false;
     }
@@ -446,20 +446,12 @@ function Questionnaire() {
             >
               Find Roof Data
             </button>
-            {loading && <p>Loading...</p>}
-            {SolarData && (
-              <div>
-                <h3 className="text-xl font-semibold mt-4">Solar Data Visualization:</h3>
-                <MapView latitude={SolarData.center.latitude} longitude={SolarData.center.longitude} />
-                <SunshineQuantilesChart sunshineQuantiles={SolarData.solarPotential.wholeRoofStats.sunshineQuantiles} />
+          </div>
+        )}
 
-              </div>
-            )}
-            {submitted && (
-              <div>
-                <h2 className="text-2xl font-bold mb-4">Thank you for submitting the questionnaire!</h2>
-              </div>
-            )}
+        {submitted && (
+          <div>
+            <h2 className="text-2xl font-bold mb-4">Thank you for submitting the questionnaire!</h2>
           </div>
         )}
       </div>

@@ -7,7 +7,7 @@ const axios = require('axios');
 const router = require('./routes/sunroofRoutes.js');
 const cors = require('cors');
 const BuildingInsights = require('./models/buildinginsight');
-const jwt = require('jsonwebtoken'); // Import JWT
+const jwt = require('jsonwebtoken');
 
 
 const app = express();
@@ -71,8 +71,7 @@ app.post('/api/send-message', async (req, res) => {
 });
 
 app.use('/api/users', require('./routes/userRoutes')); // Include the user routes
-app.use('/api/sunroof', require('./routes/sunroofRoutes.js')); // Include the sunroof routes
-
+app.use('/api/sunroof', require('./routes/sunroofRoutes')); // Include the sunroof routes
 
 app.get('/api/protected', authenticateToken, (req, res) => {
   res.json({ message: 'This is a protected route', user: req.user });
