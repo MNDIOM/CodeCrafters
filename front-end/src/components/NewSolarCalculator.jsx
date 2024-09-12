@@ -5,8 +5,7 @@ const NewSolarCalculator = () => {
   const [savings, setSavings] = useState(null);
 
   const handleCalculate = () => {
-    // Example calculation: 
-    // Assuming an average savings rate of 20% on solar
+    
     const averageSavingsRate = 0.20; 
     const estimatedSavings = monthlyBill * averageSavingsRate * 12; // Annual savings
 

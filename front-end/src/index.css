@@ -165,7 +165,7 @@
   
 .futuristic-background {
   background: radial-gradient(circle, rgba(20,20,20,0.9), rgba(0,0,0,1));
-  box-shadow: 0 4px 30px rgba(0, 242, 255, 0.1);
+  box-shadow: 0 4px 30px rgba(4, 87, 92, 0.1);
   position: relative;
   overflow: hidden;
 }
@@ -173,7 +173,7 @@
 
 .futuristic-title {
   font-size: 3rem;
-  color: #04626b;
+  color: #01282b;
   text-shadow: 0 2px 12px rgba(0, 234, 255, 0.6), 0 1px 4px rgba(0, 0, 0, 0.2);
   transform: perspective(600px) rotateY(3deg);
   transition: transform 0.5s ease, text-shadow 0.5s;
@@ -208,7 +208,7 @@
 .login {
   
 .shadow-3xl {
-  box-shadow: 0 20px 50px rgba(0, 234, 255, 0.4), 0 10px 30px rgba(0, 234, 255, 0.2);
+  box-shadow: 0 20px 50px rgba(1, 28, 31, 0.4), 0 10px 30px rgba(0, 234, 255, 0.2);
 }
 
 
@@ -223,7 +223,7 @@
 
 
 .futuristic-title {
-  color: #00eaff;
+  color: #022225;
   text-shadow: 0 4px 16px rgba(0, 234, 255, 0.5);
   transition: text-shadow 0.4s ease;
 }

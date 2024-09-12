@@ -175,4 +175,10 @@ router.post('/UserProfile/solar-estimate', authenticateToken, async (req, res) =
   }
 });
 
+// POST /logout - Route to handle user logout
+router.post('/logout', (req, res) => {
+  // Clear the user's token or session on the server side if needed
+  res.status(200).json({ message: 'Logged out successfully' });
+});
+
 module.exports = router;

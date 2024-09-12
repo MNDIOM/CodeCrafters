@@ -26,7 +26,7 @@ export default function AboutUs() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
           {/* Left side: Text content */}
           <div className="space-y-6 lg:space-y-8 text-white">
-            <h2 className="text-5xl font-extrabold tracking-wide futuristic-title">
+            <h2 className="text-5xl font-bold tracking-wide futuristic-title">
               About Us
             </h2>
             <p className="text-lg leading-8 futuristic-text">
