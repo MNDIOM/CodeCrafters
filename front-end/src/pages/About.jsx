@@ -30,7 +30,7 @@ export default function AboutUs() {
               About Us
             </h2>
             <p className="text-lg leading-8 futuristic-text">
-              Welcome to SunVolt, where we are dedicated to empowering a sustainable future through clean, renewable energy solutions. Discover more about our mission and how we are making a difference in the world of solar energy.
+              Welcome to SunVolt, where we are dedicated to a sustainable future through clean, renewable energy solutions. At SunVolt, we believe that every nation, business, and family can contribute to a greener planet by harnessing the power of the Sun. Our mission is to make solar energy accessible, affordable, and easy to integrate into everyday life. We are passionate about driving the transition to renewable energy sources, and our expert team is committed to providing innovative solar solutions tailored to meet your unique needs. Join us on our journey to create a brighter, cleaner, and more sustainable world for generations to come.
             </p>
             <div className="space-y-6 lg:space-y-8">
               <div className="grid grid-cols-1 gap-6 text-base font-semibold leading-7 futuristic-link sm:grid-cols-2 lg:grid-cols-2">

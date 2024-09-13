@@ -86,151 +86,151 @@
   transform: scale(1.03);
 }
 
-.About{
+.About {
 
 
-.futuristic-background {
-  background: radial-gradient(circle, rgba(20,20,20,0.9), rgba(0,0,0,1));
-  box-shadow: 0 4px 30px rgba(0, 242, 255, 0.1);
-  position: relative;
-  overflow: hidden;
+  .futuristic-background {
+    background: radial-gradient(circle, rgba(20, 20, 20, 0.9), rgba(0, 0, 0, 1));
+    box-shadow: 0 4px 30px rgba(0, 242, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+  }
+
+
+  .futuristic-title {
+    font-size: 3rem;
+    color: #00eaff;
+    text-shadow: 0 2px 12px rgba(0, 234, 255, 0.6), 0 1px 4px rgba(0, 0, 0, 0.2);
+    transform: perspective(600px) rotateY(3deg);
+    transition: transform 0.5s ease, text-shadow 0.5s;
+  }
+
+  .futuristic-title:hover {
+    transform: perspective(600px) rotateY(0deg);
+    text-shadow: 0 4px 24px rgba(0, 234, 255, 1), 0 2px 10px rgba(0, 0, 0, 0.3);
+  }
+
+
+  .futuristic-text {
+    color: #8fd3ff;
+    text-shadow: 0 2px 8px rgba(0, 234, 255, 0.3);
+  }
+
+
+  .stat-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 30px rgba(0, 242, 255, 0.1);
+    transition: transform 0.4s ease;
+  }
+
+  .stat-card:hover {
+    transform: translateY(-10px) scale(1.05);
+    box-shadow: 0 8px 50px rgba(0, 242, 255, 0.3);
+  }
+
+
+  .futuristic-number {
+    color: #00eaff;
+    text-shadow: 0 2px 12px rgba(0, 234, 255, 0.6);
+  }
+
+
+  .arrow {
+    transition: text-shadow 0.4s, transform 0.4s;
+  }
+
+  .arrow:hover {
+    text-shadow: 0 2px 12px rgba(0, 234, 255, 0.9);
+    transform: translateX(5px);
+  }
+
+
+  .futuristic-video {
+    box-shadow: 0 0 20px rgba(0, 242, 255, 0.7);
+    border: 2px solid rgba(0, 234, 255, 0.5);
+    transition: border 0.3s, box-shadow 0.3s;
+  }
+
+  .futuristic-video:hover {
+    box-shadow: 0 0 30px rgba(0, 242, 255, 1);
+    border-color: rgba(0, 234, 255, 1);
+  }
+
 }
 
+.SolarInfos {
 
-.futuristic-title {
-  font-size: 3rem;
-  color: #00eaff;
-  text-shadow: 0 2px 12px rgba(0, 234, 255, 0.6), 0 1px 4px rgba(0, 0, 0, 0.2);
-  transform: perspective(600px) rotateY(3deg);
-  transition: transform 0.5s ease, text-shadow 0.5s;
-}
-
-.futuristic-title:hover {
-  transform: perspective(600px) rotateY(0deg);
-  text-shadow: 0 4px 24px rgba(0, 234, 255, 1), 0 2px 10px rgba(0, 0, 0, 0.3);
-}
+  .futuristic-background {
+    background: radial-gradient(circle, rgba(20, 20, 20, 0.9), rgba(0, 0, 0, 1));
+    box-shadow: 0 4px 30px rgba(0, 242, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+  }
 
 
-.futuristic-text {
-  color: #8fd3ff;
-  text-shadow: 0 2px 8px rgba(0, 234, 255, 0.3);
-}
+  .futuristic-title {
+    font-size: 3rem;
+    color: #04626b;
+    text-shadow: 0 2px 12px rgba(0, 234, 255, 0.6), 0 1px 4px rgba(0, 0, 0, 0.2);
+    transform: perspective(600px) rotateY(3deg);
+    transition: transform 0.5s ease, text-shadow 0.5s;
+  }
+
+  .futuristic-title:hover {
+    transform: perspective(600px) rotateY(0deg);
+    text-shadow: 0 4px 24px rgba(0, 234, 255, 1), 0 2px 10px rgba(0, 0, 0, 0.3);
+  }
 
 
-.stat-card {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 30px rgba(0, 242, 255, 0.1);
-  transition: transform 0.4s ease;
-}
-
-.stat-card:hover {
-  transform: translateY(-10px) scale(1.05);
-  box-shadow: 0 8px 50px rgba(0, 242, 255, 0.3);
-}
+  .futuristic-text {
+    color: #8fd3ff;
+    text-shadow: 0 2px 8px rgba(0, 234, 255, 0.3);
+  }
 
 
-.futuristic-number {
-  color: #00eaff;
-  text-shadow: 0 2px 12px rgba(0, 234, 255, 0.6);
-}
+  .futuristic-video {
+    box-shadow: 0 0 20px rgba(0, 242, 255, 0.7);
+    border: 2px solid rgba(0, 234, 255, 0.5);
+    transition: border 0.3s, box-shadow 0.3s;
+  }
 
-
-.arrow {
-  transition: text-shadow 0.4s, transform 0.4s;
-}
-
-.arrow:hover {
-  text-shadow: 0 2px 12px rgba(0, 234, 255, 0.9);
-  transform: translateX(5px);
-}
-
-
-.futuristic-video {
-  box-shadow: 0 0 20px rgba(0, 242, 255, 0.7);
-  border: 2px solid rgba(0, 234, 255, 0.5);
-  transition: border 0.3s, box-shadow 0.3s;
-}
-
-.futuristic-video:hover {
-  box-shadow: 0 0 30px rgba(0, 242, 255, 1);
-  border-color: rgba(0, 234, 255, 1);
-}
-
-}
-
-.SolarInfos{
-  
-.futuristic-background {
-  background: radial-gradient(circle, rgba(20,20,20,0.9), rgba(0,0,0,1));
-  box-shadow: 0 4px 30px rgba(0, 242, 255, 0.1);
-  position: relative;
-  overflow: hidden;
-}
-
-
-.futuristic-title {
-  font-size: 3rem;
-  color: #04626b;
-  text-shadow: 0 2px 12px rgba(0, 234, 255, 0.6), 0 1px 4px rgba(0, 0, 0, 0.2);
-  transform: perspective(600px) rotateY(3deg);
-  transition: transform 0.5s ease, text-shadow 0.5s;
-}
-
-.futuristic-title:hover {
-  transform: perspective(600px) rotateY(0deg);
-  text-shadow: 0 4px 24px rgba(0, 234, 255, 1), 0 2px 10px rgba(0, 0, 0, 0.3);
-}
-
-
-.futuristic-text {
-  color: #8fd3ff;
-  text-shadow: 0 2px 8px rgba(0, 234, 255, 0.3);
-}
-
-
-.futuristic-video {
-  box-shadow: 0 0 20px rgba(0, 242, 255, 0.7);
-  border: 2px solid rgba(0, 234, 255, 0.5);
-  transition: border 0.3s, box-shadow 0.3s;
-}
-
-.futuristic-video:hover {
-  box-shadow: 0 0 30px rgba(0, 242, 255, 1);
-  border-color: rgba(0, 234, 255, 1);
-}
+  .futuristic-video:hover {
+    box-shadow: 0 0 30px rgba(0, 242, 255, 1);
+    border-color: rgba(0, 234, 255, 1);
+  }
 
 
 }
 
 .login {
-  
-.shadow-3xl {
-  box-shadow: 0 20px 50px rgba(0, 234, 255, 0.4), 0 10px 30px rgba(0, 234, 255, 0.2);
-}
+
+  .shadow-3xl {
+    box-shadow: 0 20px 50px rgba(0, 234, 255, 0.4), 0 10px 30px rgba(0, 234, 255, 0.2);
+  }
 
 
-.futuristic-input {
-  border-color: rgba(0, 234, 255, 0.2);
-  box-shadow: 0 0 15px rgba(0, 234, 255, 0.2);
-}
+  .futuristic-input {
+    border-color: rgba(0, 234, 255, 0.2);
+    box-shadow: 0 0 15px rgba(0, 234, 255, 0.2);
+  }
 
-.futuristic-input:focus {
-  box-shadow: 0 0 30px rgba(0, 234, 255, 0.5);
-}
+  .futuristic-input:focus {
+    box-shadow: 0 0 30px rgba(0, 234, 255, 0.5);
+  }
 
 
-.futuristic-title {
-  color: #00eaff;
-  text-shadow: 0 4px 16px rgba(0, 234, 255, 0.5);
-  transition: text-shadow 0.4s ease;
-}
+  .futuristic-title {
+    color: #00eaff;
+    text-shadow: 0 4px 16px rgba(0, 234, 255, 0.5);
+    transition: text-shadow 0.4s ease;
+  }
 
-.futuristic-title:hover {
-  text-shadow: 0 6px 24px rgba(0, 234, 255, 1);
-}
+  .futuristic-title:hover {
+    text-shadow: 0 6px 24px rgba(0, 234, 255, 1);
+  }
 
 
 }

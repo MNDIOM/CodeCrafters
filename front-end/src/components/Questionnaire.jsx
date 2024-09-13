@@ -1,5 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
+import SunshineQuantilesChart from './SunshineQuantilesChart';
+import MapView from './MapView';
+
+
 
 function Questionnaire() {
   const [step, setStep] = useState(1);
@@ -15,50 +19,89 @@ function Questionnaire() {
     firstName: '',
     lastName: '',
     email: '',
+    roofMoreThan20Years: false
   });
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [SolarData, setSolarData] = useState();
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleCheckboxChange = (e) => {
     const { name, value, checked } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: checked
-        ? [...prevData[name], value]
-        : prevData[name].filter(item => item !== value)
+      [name]: Array.isArray(prevData[name])
+        ? checked
+          ? [...prevData[name], value]
+          : prevData[name].filter(item => item !== value)
+        : []
     }));
   };
 
   const handleSingleCheckboxChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.checked });
+    const { name, checked } = e.target;
+    setFormData({ ...formData, [name]: checked });
   };
 
   const handleSliderChange = (e) => {
-    setFormData({ ...formData, electricBill: e.target.value });
+    setFormData({ ...formData, electricBill: parseInt(e.target.value, 10) });
   };
 
-  const handleSubmit = () => {
-    axios.post('/api/questionnaire', formData)
-      .then(response => {
-        console.log('Form submitted:', response.data);
-        setSubmitted(true);
-      })
-      .catch(error => {
-        console.error('Error submitting form:', error);
-      });
+  const handleSubmit = async () => {
+    try {
+      const response = await axios.post('/api/questionnaire', formData);
+      console.log('Form submitted:', response.data);
+      setSubmitted(true);
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    }
   };
 
-  const handleAddressSubmit = () => {
-    const encodedAddress = encodeURIComponent(formData.address);
-    window.location.href = `https://solar.googleapis.com/v1/buildingInsights:findClosest?address=${encodedAddress}&apikey=process.VITE_SUNROOF_API_KEY`;
+  // const handleAddressSubmit = async () => {
+  //   const address = formData.address;
+  //   setLoading(true);
+  //   try {
+  //     const response = await axios.post('/api/v1/SolarData', { address });
+  //     setSolarData(response.data);
+  //     console.log('Solar data:', response.data);
+  //   } catch (error) {
+  //     console.error('Error fetching solar data:', error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   // Call handleAddressSubmit if needed on component mount
+  //   // handleAddressSubmit();
+  // }, []);
+
+
+  const handleAddressSubmit = async () => {
+    const address = formData.address;
+    setLoading(true);
+    try {
+      const response = await axios.post('/api/v1/SolarData', { address });
+      setSolarData(response.data);
+      console.log('Solar data:', response.data);
+    } catch (error) {
+      console.error('Error fetching solar data:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleNext = () => {
     if (!isNextButtonDisabled()) {
-      setStep(step + 1);
+      if (step === 11) {
+        handleSubmit(); // Assuming step 11 is the final step
+      } else {
+        setStep(step + 1);
+      }
     }
   };
 
@@ -84,16 +127,18 @@ function Questionnaire() {
         return !formData.email;
       case 10:
         return !formData.address;
+      case 11:
+        return formData.roofMoreThan20Years === false; // Corrected
       default:
         return false;
     }
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-[url('https://urbansolar.com/wp-content/uploads/2018/01/AdobeStock_111015998-1.jpeg')] bg-cover bg-center p-8">
-      <div className="w-full max-w-lg p-6 rounded-lg shadow-lg bg-white bg-opacity-90 backdrop--md border border-gray-300">
+    <div className="flex justify-center items-center min-h-screen bg-gray-50 p-8">
+      <div className="w-full max-w-lg bg-white p-6 rounded-lg shadow-lg">
         {step === 1 && (
-          <div className="p-4 bg-gradient-to-r from-blue-100 to-blue-300 rounded-lg shadow-lg">
+          <div>
             <h2 className="text-2xl font-bold mb-4">Enter your zip code</h2>
             <input
               type="text"
@@ -106,7 +151,7 @@ function Questionnaire() {
             <button
               onClick={handleNext}
               disabled={isNextButtonDisabled()}
-              className="w-full py-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-lg shadow-md hover:from-blue-600 hover:to-blue-800 transition duration-300 disabled:opacity-50"
+              className="btn btn-primary w-full"
             >
               Next
             </button>
@@ -114,7 +159,7 @@ function Questionnaire() {
         )}
 
         {step === 2 && (
-          <div className="p-4 bg-gradient-to-r from-blue-100 to-blue-300 rounded-lg shadow-lg">
+          <div>
             <h2 className="text-2xl font-bold mb-4">Choose Type</h2>
             <label className="block mb-2">
               <input
@@ -123,7 +168,6 @@ function Questionnaire() {
                 value="Home"
                 checked={formData.type.includes('Home')}
                 onChange={handleCheckboxChange}
-                className="mr-2"
               />
               Home
             </label>
@@ -134,7 +178,6 @@ function Questionnaire() {
                 value="Business"
                 checked={formData.type.includes('Business')}
                 onChange={handleCheckboxChange}
-                className="mr-2"
               />
               Business
             </label>
@@ -145,14 +188,13 @@ function Questionnaire() {
                 value="Non-Profit"
                 checked={formData.type.includes('Non-Profit')}
                 onChange={handleCheckboxChange}
-                className="mr-2"
               />
               Non-Profit
             </label>
             <button
               onClick={handleNext}
               disabled={isNextButtonDisabled()}
-              className="w-full py-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-lg shadow-md hover:from-blue-600 hover:to-blue-800 transition duration-300 disabled:opacity-50"
+              className="btn btn-primary w-full"
             >
               Next
             </button>
@@ -160,7 +202,7 @@ function Questionnaire() {
         )}
 
         {step === 3 && (
-          <div className="p-4 bg-gradient-to-r from-blue-100 to-blue-300 rounded-lg shadow-lg">
+          <div>
             <h2 className="text-2xl font-bold mb-4">Do you own or rent?</h2>
             <label className="block mb-2">
               <input
@@ -169,7 +211,6 @@ function Questionnaire() {
                 value="Own"
                 checked={formData.ownOrRent === 'Own'}
                 onChange={handleChange}
-                className="mr-2"
               />
               I own
             </label>
@@ -180,14 +221,13 @@ function Questionnaire() {
                 value="Rent"
                 checked={formData.ownOrRent === 'Rent'}
                 onChange={handleChange}
-                className="mr-2"
               />
               I rent
             </label>
             <button
               onClick={handleNext}
               disabled={isNextButtonDisabled()}
-              className="w-full py-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-lg shadow-md hover:from-blue-600 hover:to-blue-800 transition duration-300 disabled:opacity-50"
+              className="btn btn-primary w-full"
             >
               Next
             </button>
@@ -195,7 +235,7 @@ function Questionnaire() {
         )}
 
         {step === 4 && (
-          <div className="p-4 bg-gradient-to-r from-blue-100 to-blue-300 rounded-lg shadow-lg">
+          <div>
             <h2 className="text-2xl font-bold mb-4">How much is your average monthly electric bill?</h2>
             <input
               type="range"
@@ -211,7 +251,7 @@ function Questionnaire() {
             <button
               onClick={handleNext}
               disabled={isNextButtonDisabled()}
-              className="w-full py-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-lg shadow-md hover:from-blue-600 hover:to-blue-800 transition duration-300 disabled:opacity-50"
+              className="btn btn-primary w-full"
             >
               Next
             </button>
@@ -219,7 +259,7 @@ function Questionnaire() {
         )}
 
         {step === 5 && (
-          <div className="p-4 bg-gradient-to-r from-blue-100 to-blue-300 rounded-lg shadow-lg">
+          <div>
             <h2 className="text-2xl font-bold mb-4">Are you interested in solar batteries?</h2>
             <label className="block mb-2">
               <input
@@ -228,7 +268,6 @@ function Questionnaire() {
                 value="Yes"
                 checked={formData.interestedInBatteries === 'Yes'}
                 onChange={handleChange}
-                className="mr-2"
               />
               Yes
             </label>
@@ -239,14 +278,13 @@ function Questionnaire() {
                 value="No"
                 checked={formData.interestedInBatteries === 'No'}
                 onChange={handleChange}
-                className="mr-2"
               />
               No
             </label>
             <button
               onClick={handleNext}
               disabled={isNextButtonDisabled()}
-              className="w-full py-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-lg shadow-md hover:from-blue-600 hover:to-blue-800 transition duration-300 disabled:opacity-50"
+              className="btn btn-primary w-full"
             >
               Next
             </button>
@@ -254,8 +292,8 @@ function Questionnaire() {
         )}
 
         {step === 6 && (
-          <div className="p-4 bg-gradient-to-r from-blue-100 to-blue-300 rounded-lg shadow-lg">
-            <h2 className="text-2xl font-bold mb-4">Why are you interested in solar batteries?</h2>
+          <div>
+            <h2 className="text-2xl font-bold mb-4">What’s the main reason you want a battery?</h2>
             <label className="block mb-2">
               <input
                 type="checkbox"
@@ -263,36 +301,33 @@ function Questionnaire() {
                 value="Power Backup"
                 checked={formData.batteryReason.includes('Power Backup')}
                 onChange={handleCheckboxChange}
-                className="mr-2"
               />
-              Power Backup
+              For power backup
             </label>
             <label className="block mb-2">
               <input
                 type="checkbox"
                 name="batteryReason"
-                value="Energy Independence"
-                checked={formData.batteryReason.includes('Energy Independence')}
+                value="Maximize Savings"
+                checked={formData.batteryReason.includes('Maximize Savings')}
                 onChange={handleCheckboxChange}
-                className="mr-2"
               />
-              Energy Independence
+              Maximize savings
             </label>
             <label className="block mb-4">
               <input
                 type="checkbox"
                 name="batteryReason"
-                value="Cost Savings"
-                checked={formData.batteryReason.includes('Cost Savings')}
+                value="Self-Supply"
+                checked={formData.batteryReason.includes('Self-Supply')}
                 onChange={handleCheckboxChange}
-                className="mr-2"
               />
-              Cost Savings
+              Self-supply
             </label>
             <button
               onClick={handleNext}
               disabled={isNextButtonDisabled()}
-              className="w-full py-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-lg shadow-md hover:from-blue-600 hover:to-blue-800 transition duration-300 disabled:opacity-50"
+              className="btn btn-primary w-full"
             >
               Next
             </button>
@@ -300,8 +335,8 @@ function Questionnaire() {
         )}
 
         {step === 7 && (
-          <div className="p-4 bg-gradient-to-r from-blue-100 to-blue-300 rounded-lg shadow-lg">
-            <h2 className="text-2xl font-bold mb-4">Will you need to remove trees to install solar panels?</h2>
+          <div>
+            <h2 className="text-2xl font-bold mb-4">Would you like to remove any trees or obstructions?</h2>
             <label className="block mb-2">
               <input
                 type="radio"
@@ -309,7 +344,6 @@ function Questionnaire() {
                 value="Yes"
                 checked={formData.removeTrees === 'Yes'}
                 onChange={handleChange}
-                className="mr-2"
               />
               Yes
             </label>
@@ -320,14 +354,13 @@ function Questionnaire() {
                 value="No"
                 checked={formData.removeTrees === 'No'}
                 onChange={handleChange}
-                className="mr-2"
               />
               No
             </label>
             <button
               onClick={handleNext}
               disabled={isNextButtonDisabled()}
-              className="w-full py-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-lg shadow-md hover:from-blue-600 hover:to-blue-800 transition duration-300 disabled:opacity-50"
+              className="btn btn-primary w-full"
             >
               Next
             </button>
@@ -335,8 +368,8 @@ function Questionnaire() {
         )}
 
         {step === 8 && (
-          <div className="p-4 bg-gradient-to-r from-blue-100 to-blue-300 rounded-lg shadow-lg">
-            <h2 className="text-2xl font-bold mb-4">What’s your first name?</h2>
+          <div>
+            <h2 className="text-2xl font-bold mb-4">What's your name?</h2>
             <input
               type="text"
               name="firstName"
@@ -345,7 +378,6 @@ function Questionnaire() {
               placeholder="First Name"
               className="border border-gray-300 p-2 w-full rounded mb-4"
             />
-            <h2 className="text-2xl font-bold mb-4">What’s your last name?</h2>
             <input
               type="text"
               name="lastName"
@@ -357,7 +389,7 @@ function Questionnaire() {
             <button
               onClick={handleNext}
               disabled={isNextButtonDisabled()}
-              className="w-full py-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-lg shadow-md hover:from-blue-600 hover:to-blue-800 transition duration-300 disabled:opacity-50"
+              className="btn btn-primary w-full"
             >
               Next
             </button>
@@ -365,20 +397,20 @@ function Questionnaire() {
         )}
 
         {step === 9 && (
-          <div className="p-4 bg-gradient-to-r from-blue-100 to-blue-300 rounded-lg shadow-lg">
-            <h2 className="text-2xl font-bold mb-4">What’s your email address?</h2>
+          <div>
+            <h2 className="text-2xl font-bold mb-4">Enter your email</h2>
             <input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
-              placeholder="Email Address"
+              placeholder="Enter your email"
               className="border border-gray-300 p-2 w-full rounded mb-4"
             />
             <button
               onClick={handleNext}
               disabled={isNextButtonDisabled()}
-              className="w-full py-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-lg shadow-md hover:from-blue-600 hover:to-blue-800 transition duration-300 disabled:opacity-50"
+              className="btn btn-primary w-full"
             >
               Next
             </button>
@@ -386,27 +418,39 @@ function Questionnaire() {
         )}
 
         {step === 10 && (
-          <div className="p-4 bg-gradient-to-r from-blue-100 to-blue-300 rounded-lg shadow-lg">
-            <h2 className="text-2xl font-bold mb-4">What’s your address?</h2>
+          <div>
+            <h2 className="text-2xl font-bold mb-4">Enter your address</h2>
             <input
               type="text"
               name="address"
               value={formData.address}
               onChange={handleChange}
-              placeholder="Address"
+              placeholder="Enter your address"
               className="border border-gray-300 p-2 w-full rounded mb-4"
             />
             <button
               onClick={handleAddressSubmit}
-              className="w-full py-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-lg shadow-md hover:from-blue-600 hover:to-blue-800 transition duration-300"
+              disabled={isNextButtonDisabled()}
+              className="btn btn-primary w-full"
             >
-              Find Roof Data
+              Let's find your roof
             </button>
-            
+            {loading && <p>Loading...</p>}
+            {SolarData && (
+              <div>
+                <h3 className="text-xl font-semibold mt-4">Solar Data Visualization:</h3>
+                <MapView latitude={SolarData.center.latitude} longitude={SolarData.center.longitude} />
+                <SunshineQuantilesChart sunshineQuantiles={SolarData.solarPotential.wholeRoofStats.sunshineQuantiles} />
+
+              </div>
+            )}
+            {submitted && (
+              <div>
+                <h2 className="text-2xl font-bold mb-4">Thank you for submitting the questionnaire!</h2>
+              </div>
+            )}
           </div>
         )}
-
-        {submitted && <p className="mt-4 text-green-500">Thank you for submitting!</p>}
       </div>
     </div>
   );
