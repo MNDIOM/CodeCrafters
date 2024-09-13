@@ -135,8 +135,8 @@ function Questionnaire() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-50 p-8">
-      <div className="w-full max-w-lg bg-white p-6 rounded-lg shadow-lg">
+    <div className="flex justify-center items-center min-h-screen bg-[url('https://urbansolar.com/wp-content/uploads/2018/01/AdobeStock_111015998-1.jpeg')] bg-cover bg-center p-8">
+      <div className="w-full max-w-lg p-6 rounded-lg shadow-lg bg-white bg-opacity-90 backdrop--md border border-gray-300">
         {step === 1 && (
           <div>
             <h2 className="text-2xl font-bold mb-4">Enter your zip code</h2>
